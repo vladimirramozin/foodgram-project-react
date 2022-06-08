@@ -1,10 +1,10 @@
 from django.core.paginator import Paginator
 from recipe.models import Ingredient, Recipe, Tag
 from rest_framework import viewsets
-from rest_framework.pagination import PageNumberPagination
+from users.models import User
 
 from .serializers import (IngredientGetSerializer, IngredientSerializer,
-                          RecipeSerializer, TagSerializer)
+                          RecipeSerializer, TagSerializer, UserSerializer)
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
@@ -29,3 +29,7 @@ class IngredientsViewSet(viewsets.ReadOnlyModelViewSet):
             return IngredientGetSerializer
         # А если запрошенное действие — не 'list', применяем CatSerializer
         return IngredientSerializer
+
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer

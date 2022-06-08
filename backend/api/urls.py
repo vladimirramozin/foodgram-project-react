@@ -27,5 +27,6 @@ router.register('ingredients', IngredientsViewSet)
 
 urlpatterns = [
     path('',  include(router.urls)),
-    #path('auth/token/login/', views.obtain_auth_token),
+    path('', include('djoser.urls')),
+    path('', include('djoser.urls.jwt')),
 ]
