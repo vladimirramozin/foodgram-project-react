@@ -1,13 +1,17 @@
+from django.contrib.auth.hashers import make_password
+from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 
-class User(models.Model):
-    created = models.DateTimeField(auto_now_add=True)
-    email = models.CharField(max_length=254, blank=False)
-    username = models.CharField(max_length=150, blank=False)
-    first_name = models.CharField(max_length=10, blank=False)
-    last_name = models.CharField(max_length=150, blank=False)
-    password = models.CharField(max_length=150, blank=False)
+class User(AbstractUser):
+    email = models.CharField(max_length=254, unique=True)
+    username = models.CharField(max_length=150)
+    first_name = models.CharField(max_length=10)
+    last_name = models.CharField(max_length=150)
+    #password = models.CharField(max_length=150)
+    
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['username']
 
-    class Meta:
-        ordering = ('created',)
+
+

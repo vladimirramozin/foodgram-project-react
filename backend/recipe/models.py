@@ -1,8 +1,12 @@
+import re
+from tabnanny import verbose
+
+from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.utils.html import format_html
 
-#User = get_user_model()
+User = get_user_model()
 
 CHOICES = (
         ('ml', 'мл'),
@@ -11,6 +15,7 @@ CHOICES = (
     )
 
 class Ingredient(models.Model):
+    pagination_class = None
     ingredient = models.CharField(max_length=200, verbose_name='название ингридиента')
     quantity = models.PositiveIntegerField(validators=[MinValueValidator(1, 'out of range')], verbose_name='количество в целых числах')
     measurement_unit = models.CharField(max_length=200, verbose_name='еденица измерения', choices=CHOICES)
@@ -23,6 +28,7 @@ class Ingredient(models.Model):
         return self.ingredient
 
 class Tag(models.Model):
+    pagination_class = None
     name = models.CharField(max_length=200, verbose_name='Название тега')
     slug = models.SlugField(unique=True)
     color = models.CharField(max_length=7, default="#ffffff")
@@ -35,17 +41,18 @@ class Tag(models.Model):
         return self.name
 
 class Recipe(models.Model):
-#    author = models.ForeignKey(
-#        User,
-#        on_delete=models.CASCADE,
-#        related_name='recipe',
-#        verbose_name='автор'
-#   )
+    pagination_class = None
+    author = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='recipe',
+        verbose_name='автор'
+   )
     name = models.CharField(max_length=200, verbose_name='Назавание рецепта')
     text = models.TextField(verbose_name='Описание рецепта')
     image = models.ImageField(
         'Изображение',
-        upload_to='recipe/',
+        upload_to='recipe/images/',
         blank=True
     )  
     ingredients = models.ManyToManyField(Ingredient)
@@ -61,3 +68,55 @@ class Recipe(models.Model):
         verbose_name_plural = 'Рецепты'
         default_related_name = 'recipe'
         ordering = ('-pub_date',)
+
+class Subscriptions(models.Model):
+    user = models.ForeignKey(User,
+                             blank=True,
+                             null=True,
+                             on_delete=models.CASCADE,
+                             related_name='follower')
+    following = models.ForeignKey(User,
+                                  blank=True,
+                                  null=True,
+                                  on_delete=models.CASCADE,
+                                  related_name='following')
+    
+    class Meta:
+        verbose_name = 'Подписка'
+        verbose_name_plural = 'Подписки'
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'following'],
+                name='unique_foloowing'
+            )
+        ]
+        
+    def validate_following(self, following):
+        if self.context.get('request').method != 'POST':
+            return following
+        if self.context.get('request').user == following:
+            message = 'Вы подписываетесь на самого себя'
+            raise serializers.ValidationError(message)
+        return following
+
+class FavoriteRecipies(models.Model):
+    user = models.ForeignKey(User,
+                             blank=True,
+                             null=True,
+                             on_delete=models.CASCADE,
+                             related_name='user')
+    favourite = models.ForeignKey(Recipe,
+                             blank=True,
+                             null=True,
+                             on_delete=models.CASCADE,
+                             related_name='favorite_recipe')
+    class Meta:
+        verbose_name = 'Избранные записи'
+        verbose_name_plural = 'Избранные записи'
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'favourite'],
+                name='unique_favorite'
+            )
+        ]
+        

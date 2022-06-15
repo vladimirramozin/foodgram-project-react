@@ -1,10 +1,18 @@
 from django.core.paginator import Paginator
-from recipe.models import Ingredient, Recipe, Tag
-from rest_framework import viewsets
+from recipe.models import (FavoriteRecipies, Ingredient, Recipe, Subscriptions,
+                           Tag)
+from rest_framework import mixins, viewsets
 from users.models import User
 
-from .serializers import (IngredientGetSerializer, IngredientSerializer,
-                          RecipeSerializer, TagSerializer, UserSerializer)
+from .serializers import (FavoriteRecipiesSerializer, IngredientGetSerializer,
+                          IngredientSerializer, RecipeSerializer,
+                          SubscriptionsSerializer, TagSerializer,
+                          UserSerializer)
+
+
+class CreateorListViewSet(mixins.CreateModelMixin, mixins.ListModelMixin,
+                          viewsets.GenericViewSet):
+    pass
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
@@ -33,3 +41,18 @@ class IngredientsViewSet(viewsets.ReadOnlyModelViewSet):
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+
+class SubscriptionsViewSet(CreateorListViewSet):
+    serializer_class = SubscriptionsSerializer
+    search_fields = ('following__username', )
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+    def get_queryset(self):
+        subscriptions_instance = Subscriptions.objects.filter(user=self.request.user)
+        return subscriptions_instance
+
+class FavoriteViewSet(viewsets.ModelViewSet):
+    queryset = FavoriteRecipies.objects.all()
+    serializer_class = FavoriteRecipiesSerializer

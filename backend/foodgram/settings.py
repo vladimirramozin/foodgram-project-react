@@ -61,6 +61,9 @@ REST_FRAMEWORK = {
 DJOSER = {
     'SERIALIZERS': {
         'user_create': 'api.serializers.UserSerializer',
+        'user': 'api.serializers.UserSerializer',
+        'set_username': 'api.serializers.UserSerializer',
+        
        
     },
 }
@@ -103,6 +106,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'foodgram.wsgi.application'
 
+AUTH_USER_MODEL = 'users.User' 
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
