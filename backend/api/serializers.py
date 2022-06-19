@@ -1,7 +1,8 @@
+import pdb
 from pkgutil import read_code
 
-from recipe.models import (FavoriteRecipies, Ingredient, Recipe, ShoppingCart,
-                           Subscriptions, Tag)
+from recipe.models import (FavoriteRecipies, Ingredient, Ingredients, Recipe,
+                           ShoppingCart, Subscriptions, Tag)
 from rest_framework import serializers
 from rest_framework.relations import SlugRelatedField
 from rest_framework.validators import UniqueTogetherValidator
@@ -9,14 +10,25 @@ from users.models import User
 
 
 class IngredientSerializer(serializers.ModelSerializer):
+    
+    name=serializers.SerializerMethodField()
+    measurement_unit=serializers.SerializerMethodField()
     class Meta:
-        model = Ingredient
-        fields = ('ingredient', 'quantity', 'measurement_unit')
+        model = Ingredients
+        fields = ('id', 'name', 'measurement_unit', 'amount')
+    def get_measurement_unit(self, obj):
+        queryset = Ingredient.objects.filter(name=obj.ingredient)
+        serializer = IngredientGetSerializer(queryset, many=True)
+        return serializer.data[0]['measurement_unit']        
+    def get_name(self, obj):
+        queryset = Ingredient.objects.filter(name=obj.ingredient)
+        serializer = IngredientGetSerializer(queryset, many=True)
+        return serializer.data[0]['name']
 
 class IngredientGetSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ingredient
-        fields = ('id', 'ingredient', 'measurement_unit')
+        fields = ('id', 'name', 'measurement_unit')
 
 
 class TagSerializer(serializers.ModelSerializer):
@@ -25,14 +37,25 @@ class TagSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'color', 'slug')
 
 class RecipeSerializer(serializers.ModelSerializer):
-    tags = serializers.StringRelatedField(many=True)
-    ingredients = serializers.StringRelatedField(many=True)
+    tags = serializers.SerializerMethodField()
+    ingredients = serializers.SerializerMethodField()
     author = serializers.SerializerMethodField()
     is_favorited = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()
     class Meta:
         model = Recipe
         fields = ('ingredients', 'is_favorited', 'is_in_shopping_cart', 'tags', 'image', 'author', 'name', 'text', 'cooking_time') 
+    def get_tags(self, obj):
+        queryset = Tag.objects.filter(recipe=obj.id)
+        serializer = TagSerializer(queryset, many=True)
+        return serializer.data
+
+    def get_ingredients(self, obj):
+        queryset = Ingredients.objects.filter(recipe=obj.ingredients.values_list('recipe')[1])
+        #pdb.set_trace()
+        serializer = IngredientSerializer(queryset, many=True)
+        return serializer.data
+
     def get_author(self, obj):
         queryset = User.objects.filter(id=obj.author.id)
         serializer = UserSerializer(queryset, many=True)
@@ -53,7 +76,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
     is_subscribed = serializers.SerializerMethodField()
     class Meta:
         model = User
-        fields = ('email', 'username', 'first_name','last_name', 'password', 'is_subscribed')
+        fields = ('email', 'username', 'first_name','last_name', 'is_subscribed')
     def get_is_subscribed(self, obj):
         #pdb.set_trace()
         if Subscriptions.objects.filter(following=obj.id).exists():

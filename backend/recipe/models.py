@@ -1,4 +1,4 @@
-import re
+import pdb
 from tabnanny import verbose
 
 from django.conf import settings
@@ -24,11 +24,9 @@ CHOICES = (
         ('гр', 'гр'),
         ('шт', 'шт'),
     )
-
 class Ingredient(models.Model):
     pagination_class = None
-    ingredient = models.CharField(max_length=200, verbose_name='название ингридиента')
-    quantity = models.PositiveIntegerField(validators=[MinValueValidator(1, 'out of range')], verbose_name='количество в целых числах')
+    name = models.CharField(max_length=200, verbose_name='название ингридиента')
     measurement_unit = models.CharField(max_length=200, verbose_name='еденица измерения', choices=CHOICES)
     class Meta:
         verbose_name = 'ингридиент'
@@ -36,7 +34,26 @@ class Ingredient(models.Model):
         default_related_name = 'recipe'
 
     def __str__(self):
-        return self.ingredient
+        return self.name
+
+
+
+class Ingredients(models.Model):
+    pagination_class = None
+    ingredient = models.ForeignKey(Ingredient,
+                             on_delete=models.CASCADE,
+                             related_name='Ingredient')
+    amount = models.PositiveIntegerField(validators=[MinValueValidator(1, 'out of range')], verbose_name='количество в целых числах')
+    class Meta:
+        verbose_name = 'ингридиентЫ в рецепте'
+        verbose_name_plural = 'ингридиенты'
+        default_related_name = 'recipe'
+    def __str__(self):
+       # pdb.set_trace()
+        return self.ingredient.name
+
+
+
 
 class Tag(models.Model):
     pagination_class = None
@@ -66,10 +83,7 @@ class Recipe(models.Model):
         upload_to='recipe/images/',
         blank=True
     )  
-    ingredients = models.ManyToManyField(Ingredient)
-    #models.ForeignKey(Ingredient,
-    #                         on_delete=models.CASCADE,
-    #                         related_name='ingredients')
+    ingredients = models.ManyToManyField(Ingredients)
     tags = models.ManyToManyField(Tag)
     cooking_time=models.PositiveIntegerField(validators=[MinValueValidator(1, 'out of range')], verbose_name = 'время приготовления в минутах')
     pub_date = models.DateTimeField(auto_now_add=True, verbose_name='дата')

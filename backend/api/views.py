@@ -1,7 +1,9 @@
+import pdb
+
 from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404
-from recipe.models import (FavoriteRecipies, Ingredient, Recipe, ShoppingCart,
-                           Subscriptions, Tag)
+from recipe.models import (FavoriteRecipies, Ingredient, Ingredients, Recipe,
+                           ShoppingCart, Subscriptions, Tag)
 from rest_framework import mixins, permissions, viewsets
 from users.models import User
 
@@ -30,7 +32,7 @@ class TagViewSet(viewsets.ReadOnlyModelViewSet):
 
 class IngredientsViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Ingredient.objects.all()
-    serializer_class = IngredientSerializer
+    serializer_class = IngredientGetSerializer
     pagination_class = None
     def get_serializer_class(self):
         if self.action == 'list' or self.action == 'retrieve':
@@ -61,7 +63,6 @@ class ShoppingCartViewSet(CreateorListViewSet):
     serializer_class = ShoppingCartSerializer
        
     def perform_create(self, serializer):
-        print(2) 
         shopping_cart = get_object_or_404(Recipe, id=self.kwargs['recipes_id'])
         serializer.save(user=self.request.user,
                         in_shopping_cart=shopping_cart)
@@ -74,14 +75,16 @@ class DowloadShoppingCartViewSet(viewsets.ModelViewSet):
         shopping_cart = ShoppingCart.objects.filter(user=self.request.user)
         
         ingredients={}
-        for product in shopping_cart:
-            try:
-                if ingredients[product.in_shopping_cart.ingredients.values_list('ingredient')[0][0]]:
-                    buf=ingredients[product.in_shopping_cart.ingredients.values_list('ingredient')[0][0]]
-                    buf[0]+= product.in_shopping_cart.ingredients.values_list('quantity')[0][0]
-                    ingredients[product.in_shopping_cart.ingredients.values_list('ingredient')[0][0]]=buf
-            except KeyError:
-                ingredients[product.in_shopping_cart.ingredients.values_list('ingredient')[0][0]]=[product.in_shopping_cart.ingredients.values_list('quantity')[0][0], product.in_shopping_cart.ingredients.values_list('measurement_unit')[0][0]]
+        for recipe in shopping_cart:
+            #pdb.set_trace()
+            for i in range(0, len(recipe.in_shopping_cart.ingredients.values_list('ingredient'))): 
+                product = recipe.in_shopping_cart.ingredients.values('ingredient')[i]
+                try:
+                    if ingredients[Ingredients.objects.filter(id=product['ingredient'])[0].ingredient.name]:
+                        ingredients[Ingredients.objects.filter(id=product['ingredient'])[0].ingredient.name]+=recipe.in_shopping_cart.ingredients.values_list('amount')[i][0]
+                except:
+                    ingredients[Ingredients.objects.filter(id=product['ingredient'])[0].ingredient.name] = recipe.in_shopping_cart.ingredients.values_list('amount')[i][0], Ingredients.objects.filter(id=product['ingredient'])[0].ingredient.measurement_unit
+
         p='\r\n'.join('{} {} {}'.format(key, val[0], val[1]) for key, val in ingredients.items())
         if not len(shopping_cart)==0:
            file = open("ShoppingCart.txt", "w")
