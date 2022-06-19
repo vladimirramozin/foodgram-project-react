@@ -1,17 +1,28 @@
 import re
 from tabnanny import verbose
 
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from django.utils.html import format_html
+from rest_framework.authtoken.models import Token
+
+
+# This code is triggered whenever a new user has been created and saved to the database
+@receiver(post_save, sender=settings.AUTH_USER_MODEL)
+def create_auth_token(sender, instance=None, created=False, **kwargs):
+    if created:
+        Token.objects.create(user=instance)
 
 User = get_user_model()
 
 CHOICES = (
-        ('ml', 'мл'),
-        ('gr', 'гр'),
-        ('unit', 'шт'),
+        ('мл', 'мл'),
+        ('гр', 'гр'),
+        ('шт', 'шт'),
     )
 
 class Ingredient(models.Model):
@@ -56,6 +67,9 @@ class Recipe(models.Model):
         blank=True
     )  
     ingredients = models.ManyToManyField(Ingredient)
+    #models.ForeignKey(Ingredient,
+    #                         on_delete=models.CASCADE,
+    #                         related_name='ingredients')
     tags = models.ManyToManyField(Tag)
     cooking_time=models.PositiveIntegerField(validators=[MinValueValidator(1, 'out of range')], verbose_name = 'время приготовления в минутах')
     pub_date = models.DateTimeField(auto_now_add=True, verbose_name='дата')
@@ -105,7 +119,7 @@ class FavoriteRecipies(models.Model):
                              null=True,
                              on_delete=models.CASCADE,
                              related_name='user')
-    favourite = models.ForeignKey(Recipe,
+    favorite = models.ForeignKey(Recipe,
                              blank=True,
                              null=True,
                              on_delete=models.CASCADE,
@@ -115,8 +129,16 @@ class FavoriteRecipies(models.Model):
         verbose_name_plural = 'Избранные записи'
         constraints = [
             models.UniqueConstraint(
-                fields=['user', 'favourite'],
+                fields=['user', 'favorite'],
                 name='unique_favorite'
             )
         ]
-        
+
+class ShoppingCart(models.Model):
+    pagination_class = None
+    user = models.ForeignKey(User,
+                             on_delete=models.CASCADE,
+                             related_name='user_shop')
+    in_shopping_cart = models.ForeignKey(Recipe,
+                             on_delete=models.CASCADE,
+                             related_name='recipe_shopping_cart')

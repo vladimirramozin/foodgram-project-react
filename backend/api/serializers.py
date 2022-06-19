@@ -1,8 +1,7 @@
-import pdb
 from pkgutil import read_code
 
-from recipe.models import (FavoriteRecipies, Ingredient, Recipe, Subscriptions,
-                           Tag)
+from recipe.models import (FavoriteRecipies, Ingredient, Recipe, ShoppingCart,
+                           Subscriptions, Tag)
 from rest_framework import serializers
 from rest_framework.relations import SlugRelatedField
 from rest_framework.validators import UniqueTogetherValidator
@@ -28,12 +27,27 @@ class TagSerializer(serializers.ModelSerializer):
 class RecipeSerializer(serializers.ModelSerializer):
     tags = serializers.StringRelatedField(many=True)
     ingredients = serializers.StringRelatedField(many=True)
-    author = serializers.StringRelatedField()
-
+    author = serializers.SerializerMethodField()
+    is_favorited = serializers.SerializerMethodField()
+    is_in_shopping_cart = serializers.SerializerMethodField()
     class Meta:
         model = Recipe
-        fields = ('ingredients', 'tags', 'image', 'author', 'name', 'text', 'cooking_time') 
-
+        fields = ('ingredients', 'is_favorited', 'is_in_shopping_cart', 'tags', 'image', 'author', 'name', 'text', 'cooking_time') 
+    def get_author(self, obj):
+        queryset = User.objects.filter(id=obj.author.id)
+        serializer = UserSerializer(queryset, many=True)
+        return serializer.data
+    def get_is_in_shopping_cart(self, obj):
+        if ShoppingCart.objects.filter(user=self.context['view']
+                                 .request.user, in_shopping_cart = obj.id).exists():
+            return True
+        return False         
+    def get_is_favorited(self, obj):
+        
+        if FavoriteRecipies.objects.filter(user=self.context['view']
+                                 .request.user, favorite = obj.id).exists():
+            return True
+        return False
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     is_subscribed = serializers.SerializerMethodField()
@@ -69,6 +83,17 @@ class SubscriptionsSerializer(serializers.ModelSerializer):
         return serializer.data
 
 class FavoriteRecipiesSerializer(serializers.ModelSerializer):
+    favorite = serializers.SerializerMethodField()
     class Meta:
         model = FavoriteRecipies
-        fields = 'favourite',
+        fields = 'favorite',
+    def get_favorite(self):
+        queryset = FavoriteRecipies.objects.filter(author=self.author.id)
+        serializer = FavoriteRecipiesSerializer(queryset, many=True)
+        return serializer.data
+
+class ShoppingCartSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ShoppingCart
+        fields = ('in_shopping_cart',)
+        read_only_fields = 'in_shopping_cart',

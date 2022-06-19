@@ -17,14 +17,17 @@ from django.urls import include, path
 #from rest_framework.authtoken import views
 from rest_framework.routers import DefaultRouter
 
-from .views import (FavoriteViewSet, IngredientsViewSet, RecipeViewSet,
+from .views import (DowloadShoppingCartViewSet, FavoriteViewSet,
+                    IngredientsViewSet, RecipeViewSet, ShoppingCartViewSet,
                     SubscriptionsViewSet, TagViewSet)
 
 router = DefaultRouter()
 
 router.register('subscriptions', SubscriptionsViewSet, basename='subscriptions')
-router.register('recipies', RecipeViewSet)
-router.register('recipies/(?P<recipies_id>\d+)/favorite', FavoriteViewSet, basename='favorite')
+router.register('recipes/download_shopping_cart', DowloadShoppingCartViewSet, basename='dowload_shopping_cart')
+router.register('recipes/(?P<recipes_id>\d+)/favorite', FavoriteViewSet, basename='favorite')
+router.register('recipes/(?P<recipes_id>\d+)/shopping_cart', ShoppingCartViewSet, basename='shopping_cart')
+router.register('recipes', RecipeViewSet)
 router.register('tags', TagViewSet)
 router.register('ingredients', IngredientsViewSet)
 
@@ -32,7 +35,7 @@ router.register('ingredients', IngredientsViewSet)
 
 urlpatterns = [
     path('', include('djoser.urls')),
-    path('', include('djoser.urls.jwt')),
+    path('auth/', include('djoser.urls.authtoken')),
     path('',  include(router.urls)),
 
 ]
