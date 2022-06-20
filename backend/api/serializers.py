@@ -118,5 +118,5 @@ class FavoriteRecipiesSerializer(serializers.ModelSerializer):
 class ShoppingCartSerializer(serializers.ModelSerializer):
     class Meta:
         model = ShoppingCart
-        fields = ('in_shopping_cart',)
-        read_only_fields = 'in_shopping_cart',
+        fields = ()
+ 

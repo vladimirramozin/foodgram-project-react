@@ -1,5 +1,3 @@
-import pdb
-
 from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404
 from recipe.models import (FavoriteRecipies, Ingredient, Ingredients, Recipe,
@@ -70,7 +68,7 @@ class ShoppingCartViewSet(CreateorListViewSet):
 
 class DowloadShoppingCartViewSet(viewsets.ModelViewSet):
     serializer_class = ShoppingCartSerializer
-    
+    pagination_class = None
     def get_queryset(self):
         shopping_cart = ShoppingCart.objects.filter(user=self.request.user)
         

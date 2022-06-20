@@ -19,15 +19,11 @@ def create_auth_token(sender, instance=None, created=False, **kwargs):
 
 User = get_user_model()
 
-CHOICES = (
-        ('мл', 'мл'),
-        ('гр', 'гр'),
-        ('шт', 'шт'),
-    )
+
 class Ingredient(models.Model):
     pagination_class = None
     name = models.CharField(max_length=200, verbose_name='название ингридиента')
-    measurement_unit = models.CharField(max_length=200, verbose_name='еденица измерения', choices=CHOICES)
+    measurement_unit = models.CharField(max_length=200, verbose_name='еденица измерения')
     class Meta:
         verbose_name = 'ингридиент'
         verbose_name_plural = 'ингридиенты'
