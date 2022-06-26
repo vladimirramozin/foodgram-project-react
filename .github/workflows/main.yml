@@ -40,7 +40,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: true
-          file: backend/Dockerfile
+          file: Dockerfile
           tags: vladimirramozin/foodgram-project:latest
   deploy:
     runs-on: ubuntu-latest
