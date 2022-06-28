@@ -12,6 +12,13 @@ services:
     # адрес файла, где хранятся переменные окружения
     env_file:
       - ./.env
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+    volumes:
+      - ../frontend/:/app/result_build/
+
   backend:
     build: ../backend/
     restart: always
@@ -23,18 +30,12 @@ services:
     env_file:
       - ./.env
 
-
-  frontend:
-    build:
-      context: ../frontend
-      dockerfile: Dockerfile
-    volumes:
-      - ../frontend/:/app/result_build/
-
   nginx:
     image: nginx:1.19.3
     ports:
       - "80:80"
+    depends_on:
+      - backend, frontend 
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf
       - ../frontend/build:/usr/share/nginx/html/
