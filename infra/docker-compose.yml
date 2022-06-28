@@ -12,7 +12,7 @@ services:
     # адрес файла, где хранятся переменные окружения
     env_file:
       - ./.env
-  web:
+  django:
     build: ../backend/
     restart: always
     ports:
@@ -24,12 +24,12 @@ services:
       - ./.env
 
 
-  frontend:
-    build:
-      context: ../frontend
-      dockerfile: Dockerfile
-    volumes:
-      - ../frontend/:/app/result_build/
+  #frontend:
+  #  build:
+  #    context: ../frontend
+  #    dockerfile: Dockerfile
+  #  volumes:
+  #    - ../frontend/:/app/result_build/
   nginx:
     image: nginx:1.19.3
     ports:
