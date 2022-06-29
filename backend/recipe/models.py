@@ -79,8 +79,8 @@ class Recipe(models.Model):
         upload_to='recipe/images/',
         blank=True
     )  
-    ingredients = models.ManyToManyField(Ingredients)
-    tags = models.ManyToManyField(Tag)
+    ingredients = models.ManyToManyField(Ingredients, blank=True)
+    tags = models.ManyToManyField(Tag, blank=True)
     cooking_time=models.PositiveIntegerField(validators=[MinValueValidator(1, 'out of range')], verbose_name = 'время приготовления в минутах')
     pub_date = models.DateTimeField(auto_now_add=True, verbose_name='дата')
 

@@ -20,7 +20,7 @@ services:
       - db
   
   backend:
-    image: andrey0901/foodgram_backend:latest
+    image: vladimirramozin/foodgram_backend:latest
     restart: always
     volumes:
       - static_value:/var/html/static/
