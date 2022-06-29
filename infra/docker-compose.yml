@@ -14,8 +14,6 @@ services:
 
   frontend:
     image: vladimirramozin/foodgram_frontend:latest
-    ports:
-      - 8000:8000
     volumes:
       - result_build:/app/result_build/build
     depends_on:
