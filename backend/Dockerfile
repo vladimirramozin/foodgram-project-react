@@ -4,15 +4,15 @@ RUN mkdir /app
 
 WORKDIR /app
 
-#COPY ./backend/requirements.txt ./
+COPY ./backend/requirements.txt ./
 
-COPY ./requirements.txt ./
+#COPY ./requirements.txt ./
 
 
 RUN pip3 install -r requirements.txt --no-cache-dir
 
-COPY ./ ./
-#COPY ./backend ./
+#COPY ./ ./
+COPY ./backend ./
 
 EXPOSE 80
 
