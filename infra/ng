@@ -1,7 +1,7 @@
 server_tokens off;
 server {
     listen 80;
-    server_name localhost, 51.250.96.226;
+    server_name localhost, 178.154.197.178;
     location /api/docs/ {
         root /usr/share/nginx/html;
         try_files $uri $uri/redoc.html;
