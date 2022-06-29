@@ -14,6 +14,8 @@ services:
 
   frontend:
     image: vladimirramozin/foodgram_frontend:latest
+    port:
+      - 8000:8000
     volumes:
       - result_build:/app/result_build/build
     depends_on:
@@ -22,6 +24,8 @@ services:
   backend:
     image: vladimirramozin/foodgram_backend:latest
     restart: always
+    port:
+      - 8000:8000
     volumes:
       - static_value:/var/html/static/
       - media_value:/var/html/media/
