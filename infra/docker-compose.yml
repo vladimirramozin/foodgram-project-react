@@ -1,37 +1,30 @@
 version: '3.3'
-# имена и описания контейнеров, которые должны быть развёрнуты
 services:
-  # описание контейнера db
   db:
-    # образ, из которого должен быть запущен контейнер
     image: postgres:13.0-alpine
-    # volume и связанная с ним директория в контейнере
     volumes:
       - /var/lib/postgresql/data/
-    # адрес файла, где хранятся переменные окружения
     env_file:
       - ./.env
-
   frontend:
     image: vladimirramozin/foodgram_frontend:latest
     volumes:
       - result_build:/app/result_build/build
     depends_on:
       - db
-  
   backend:
     image: vladimirramozin/foodgram_backend:latest
     restart: always
     ports:
       - 8000:8000
     volumes:
-      - static_value:/var/html/static/
-      - media_value:/var/html/media/
+      - static_value:/app/static/
+      - media_value:/app/media/
     depends_on:
       - db
     env_file:
       - ./.env
- 
+
   nginx:
     image: nginx:1.19.3
     ports:
@@ -41,8 +34,8 @@ services:
       - result_build:/usr/share/nginx/html/
       - ../docs/:/usr/share/nginx/html/api/docs/
       - ../docs/openapi-schema.yml:/usr/share/nginx/html/api/docs/openapi-schema.yml
-      - static_value:/var/html/static/
-      - media_value:/var/html/media/
+      - static_value:/app/static/
+      - media_value:/app/media/
     depends_on:
       - frontend
       - backend
@@ -51,12 +44,4 @@ volumes:
   static_value:
   media_value:
   postgres_data:
-  result_build:  
-
-
-
-
-
-
-
-
+  result_build:
