@@ -60,7 +60,12 @@ jobs:
           cd infra
           sudo docker-compose down
           sudo docker-compose up -d --build
-          sudo docker-compose up -d
+          sudo docker-compose up -dsudo docker-compose exec backend python manage.py migrate auth
+          sudo docker-compose exec backend python manage.py migrate --run-syncdb
+          sudo docker-compose exec backend python manage.py collectstatic --no-input 
+
+
+          
           
           # Выполняет pull образа с DockerHub
           #sudo docker pull vladimirramozin/foodgram-project
