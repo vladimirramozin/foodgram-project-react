@@ -9,7 +9,7 @@ services:
   frontend:
     image: vladimirramozin/foodgram_frontend:latest
     volumes:
-      - result_build:/app/result_build/build
+      - result_build:/app/frontend
     depends_on:
       - db
   backend:
