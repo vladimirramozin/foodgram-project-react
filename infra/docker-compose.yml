@@ -7,11 +7,12 @@ services:
     env_file:
       - ./.env
   frontend:
-    image: vladimirramozin/foodgram_frontend:latest
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
     volumes:
       - ../frontend/:/app/result_build/
-    depends_on:
-      - db
+
   backend:
     image: vladimirramozin/foodgram_backend:latest
     restart: always
