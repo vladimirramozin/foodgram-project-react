@@ -13,7 +13,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils.html import format_html
 from rest_framework.authtoken.models import Token
-from django_base64field.fields import Base64Field
+from drf_extra_fields.fields import Base64ImageField
 
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
@@ -78,8 +78,8 @@ class Recipe(models.Model):
    )
     name = models.CharField(max_length=200, verbose_name='Назавание рецепта')
     text = models.TextField(verbose_name='Описание рецепта')
-    image = models.Base64Field()  
-   ingredients = models.ManyToManyField(Ingredients, blank=True)
+    image = Base64ImageField()
+    ingredients = models.ManyToManyField(Ingredients, blank=True)
     tags = models.ManyToManyField(Tag, blank=True)
     cooking_time=models.PositiveIntegerField(validators=[MinValueValidator(1, 'out of range')], verbose_name = 'время приготовления в минутах')
     pub_date = models.DateTimeField(auto_now_add=True, verbose_name='дата')
