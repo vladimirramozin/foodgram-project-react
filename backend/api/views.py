@@ -9,6 +9,7 @@ from .serializers import (FavoriteRecipiesSerializer, IngredientGetSerializer,
                           IngredientSerializer, RecipeSerializer,
                           ShoppingCartSerializer, SubscriptionsSerializer,
                           TagSerializer, UserSerializer)
+from rest_framework.parsers import MultiPartParser, FormParser
 
 
 class CreateorListViewSet(mixins.CreateModelMixin, mixins.ListModelMixin,
@@ -19,6 +20,7 @@ class CreateorListViewSet(mixins.CreateModelMixin, mixins.ListModelMixin,
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     serializer_class = RecipeSerializer
+    parser_classes = (MultiPartParser, FormParser)
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,) 
     
 
