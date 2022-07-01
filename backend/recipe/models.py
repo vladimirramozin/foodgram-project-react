@@ -13,18 +13,9 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils.html import format_html
 from rest_framework.authtoken.models import Token
-class Base64ImageField(serializers.ImageField):
-    def from_native(self, data):
-        if isinstance(data, basestring) and data.startswith('data:image'):
-            # base64 encoded image - decode
-            format, imgstr = data.split(';base64,') # format ~= data:image/X,
-            ext = format.split('/')[-1] # guess file extension
+from django_base64field.fields import Base64Field
 
-            data = ContentFile(base64.b64decode(imgstr), name='temp.' + ext)
 
-        return super (Base64ImageField, self).from_native(data)
-
-# This code is triggered whenever a new user has been created and saved to the database
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
 def create_auth_token(sender, instance=None, created=False, **kwargs):
     if created:
@@ -87,12 +78,8 @@ class Recipe(models.Model):
    )
     name = models.CharField(max_length=200, verbose_name='Назавание рецепта')
     text = models.TextField(verbose_name='Описание рецепта')
-    image = models.Base64ImageField(
-        'Изображение',
-        upload_to='recipe/images/',
-        blank=True
-    )  
-    ingredients = models.ManyToManyField(Ingredients, blank=True)
+    image = models.Base64Field()  
+   ingredients = models.ManyToManyField(Ingredients, blank=True)
     tags = models.ManyToManyField(Tag, blank=True)
     cooking_time=models.PositiveIntegerField(validators=[MinValueValidator(1, 'out of range')], verbose_name = 'время приготовления в минутах')
     pub_date = models.DateTimeField(auto_now_add=True, verbose_name='дата')
