@@ -83,11 +83,6 @@ class Recipe(models.Model):
     tags = models.ManyToManyField(Tag, blank=True)
     cooking_time=models.PositiveIntegerField(validators=[MinValueValidator(1, 'out of range')], verbose_name = 'время приготовления в минутах')
     pub_date = models.DateTimeField(auto_now_add=True, verbose_name='дата')
-    def image_img(self):
-        if self.image:
-            return u'<img src="%s" width="50" height="50" />' % self.image.url
-        else:
-            return '(Sin imagen)'
     def __str__(self):
         return self.text[:15]
     
