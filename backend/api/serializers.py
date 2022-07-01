@@ -42,7 +42,6 @@ class RecipeSerializer(serializers.ModelSerializer):
     author = serializers.SerializerMethodField()
     is_favorited = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()
-   #image = Base64ImageField()
     class Meta:
         model = Recipe
         fields = ('ingredients', 'is_favorited', 'is_in_shopping_cart', 'tags', 'image', 'author', 'name', 'text', 'cooking_time') 
