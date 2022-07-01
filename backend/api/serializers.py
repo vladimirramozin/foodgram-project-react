@@ -7,7 +7,7 @@ from rest_framework import serializers
 from rest_framework.relations import SlugRelatedField
 from rest_framework.validators import UniqueTogetherValidator
 from users.models import User
-
+from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers    
 
 class IngredientSerializer(serializers.ModelSerializer):
@@ -43,7 +43,7 @@ class RecipeSerializer(serializers.ModelSerializer):
     author = serializers.SerializerMethodField()
     is_favorited = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()
-    image = serializers.ImageField(required=False)
+    image = Base64ImageField()
     class Meta:
         model = Recipe
         fields = ('ingredients', 'is_favorited', 'is_in_shopping_cart', 'tags', 'image', 'author', 'name', 'text', 'cooking_time') 
