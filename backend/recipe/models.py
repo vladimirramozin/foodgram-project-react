@@ -1,5 +1,4 @@
 import pdb
-import base64
 
 from django.core.files.base import ContentFile
 from rest_framework import serializers
@@ -78,7 +77,7 @@ class Recipe(models.Model):
    )
     name = models.CharField(max_length=200, verbose_name='Назавание рецепта')
     text = models.TextField(verbose_name='Описание рецепта')
-    image = Base64ImageField()
+    image = ImageField(upload_to = 'static')
     ingredients = models.ManyToManyField(Ingredients, blank=True)
     tags = models.ManyToManyField(Tag, blank=True)
     cooking_time=models.PositiveIntegerField(validators=[MinValueValidator(1, 'out of range')], verbose_name = 'время приготовления в минутах')
