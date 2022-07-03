@@ -53,8 +53,8 @@ class RecipeSerializer(serializers.ModelSerializer):
         return serializer.data
 
     def get_ingredients(self, obj):
-        print(obj.ingredients.values_list('recipe'))
-        queryset = Ingredients.objects.filter(recipe=obj.ingredients.values_list('recipe'))
+        print(obj.ingredients.values_list('recipe')[1])
+        queryset = Ingredients.objects.filter(recipe=obj.ingredients.values_list('recipe')[1])
         serializer = IngredientSerializer(queryset, many=True)
         return serializer.data
 
