@@ -39,7 +39,7 @@ class TagSerializer(serializers.ModelSerializer):
 
 class RecipeSerializer(serializers.ModelSerializer):
     tags = serializers.SerializerMethodField()
-    #ingredients = serializers.SerializerMethodField()
+    ingredients = serializers.SerializerMethodField()
     #author = serializers.SerializerMethodField()
     is_favorited = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()
@@ -52,11 +52,11 @@ class RecipeSerializer(serializers.ModelSerializer):
         serializer = TagSerializer(queryset, many=True)
         return serializer.data
 
-    #def get_ingredients(self, obj):
+    def get_ingredients(self, obj):
     #    print(obj.ingredients.values_list('recipe'))
-    #    queryset = Ingredients.objects.filter(recipe=obj.ingredients.values_list('recipe')[1])
-    #    serializer = IngredientSerializer(queryset, many=True)
-    #    return serializer.data
+        queryset = Ingredients.objects.filter(recipe=obj.ingredients.values_list('recipe')[0])
+        serializer = IngredientSerializer(queryset, many=True)
+        return serializer.data
 
     #def get_author(self, obj):
         #queryset = User.objects.filter(email=obj.email)
