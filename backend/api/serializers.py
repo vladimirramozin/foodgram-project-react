@@ -59,7 +59,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         return serializer.data
 
     def get_author(self, obj):
-        queryset = User.objects.filter(id=obj.author.id)
+        queryset = User.objects.filter(email=obj.email)
         serializer = UserSerializer(queryset, many=True)
         return serializer.data
     def get_is_in_shopping_cart(self, obj):
