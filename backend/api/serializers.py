@@ -37,10 +37,26 @@ class TagSerializer(serializers.ModelSerializer):
         model = Tag
         fields = ('id', 'name', 'color', 'slug')
 
+class UserSerializer(serializers.HyperlinkedModelSerializer):
+    is_subscribed = serializers.SerializerMethodField()
+    class Meta:
+        model = User
+        fields = ('email', 'username', 'first_name','last_name', 'is_subscribed')
+    def get_is_subscribed(self, obj):
+        #pdb.set_trace()
+        if Subscriptions.objects.filter(following=obj.id).exists():
+            return True
+        return False
+
+
 class RecipeSerializer(serializers.ModelSerializer):
     tags = serializers.SerializerMethodField()
     ingredients = serializers.SerializerMethodField()
-    #author = serializers.SerializerMethodField()
+    author = SlugRelatedField(
+        queryset=User.objects.all(),
+        slug_field='name',
+        default=serializers.UserSerializer()
+    )    
     is_favorited = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()
     image = Base64ImageField()
@@ -72,17 +88,6 @@ class RecipeSerializer(serializers.ModelSerializer):
         
         if FavoriteRecipies.objects.filter(user=self.context['view']
                                  .request.user, favorite = obj.id).exists():
-            return True
-        return False
-
-class UserSerializer(serializers.HyperlinkedModelSerializer):
-    is_subscribed = serializers.SerializerMethodField()
-    class Meta:
-        model = User
-        fields = ('email', 'username', 'first_name','last_name', 'is_subscribed')
-    def get_is_subscribed(self, obj):
-        #pdb.set_trace()
-        if Subscriptions.objects.filter(following=obj.id).exists():
             return True
         return False
 
