@@ -14,7 +14,7 @@ services:
       - ../frontend/:/app/result_build/
 
   backend:
-    image: vladimirramozin/foodgram_backend_3:latest
+    image: vladimirramozin/foodgram_backend_4:latest
     restart: always
     volumes:
       - static_value:/app/static/
