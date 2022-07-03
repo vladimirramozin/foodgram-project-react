@@ -71,6 +71,7 @@ class Recipe(models.Model):
     pagination_class = None
     author = models.ForeignKey(
         User,
+        null=True,
         on_delete=models.CASCADE,
         related_name='recipe',
         verbose_name='автор'
