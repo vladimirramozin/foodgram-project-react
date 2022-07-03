@@ -55,6 +55,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         slug_field='name',
         default=UserSerializer()
     )
+
     tags = serializers.SerializerMethodField()
     ingredients = serializers.SerializerMethodField()   
     is_favorited = serializers.SerializerMethodField()
