@@ -22,6 +22,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
     serializer_class = RecipeSerializer
    # parser_classes = (MultiPartParser, FormParser)
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,) 
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user)
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Tag.objects.all()

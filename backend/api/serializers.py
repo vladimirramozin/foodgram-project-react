@@ -40,7 +40,7 @@ class TagSerializer(serializers.ModelSerializer):
 class RecipeSerializer(serializers.ModelSerializer):
     tags = serializers.SerializerMethodField()
     ingredients = serializers.SerializerMethodField()
-    author = serializers.SerializerMethodField()
+    #author = serializers.SerializerMethodField()
     is_favorited = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()
     image = Base64ImageField()
@@ -59,10 +59,10 @@ class RecipeSerializer(serializers.ModelSerializer):
         serializer = IngredientSerializer(queryset, many=True)
         return serializer.data
 
-    def get_author(self, obj):
-        queryset = User.objects.filter(email=obj.email)
-        serializer = UserSerializer(queryset, many=True)
-        return serializer.data
+    #def get_author(self, obj):
+    #    queryset = User.objects.filter(email=obj.email)
+    #    serializer = UserSerializer(queryset, many=True)
+    #    return serializer.data
     def get_is_in_shopping_cart(self, obj):
         if ShoppingCart.objects.filter(user=self.context['view']
                                  .request.user, in_shopping_cart = obj.id).exists():
