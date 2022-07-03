@@ -55,7 +55,7 @@ class RecipeSerializer(serializers.ModelSerializer):
     author = SlugRelatedField(
         queryset=User.objects.all(),
         slug_field='name',
-        default=serializers.UserSerializer()
+        default=UserSerializer()
     )    
     is_favorited = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()
