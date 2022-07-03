@@ -50,13 +50,13 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class RecipeSerializer(serializers.ModelSerializer):
-    tags = serializers.SerializerMethodField()
-    ingredients = serializers.SerializerMethodField()
     author = SlugRelatedField(
         queryset=User.objects.all(),
         slug_field='name',
         default=UserSerializer()
-    )    
+    )
+    tags = serializers.SerializerMethodField()
+    ingredients = serializers.SerializerMethodField()   
     is_favorited = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()
     image = Base64ImageField()
