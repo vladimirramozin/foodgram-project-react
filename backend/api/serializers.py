@@ -54,6 +54,7 @@ class RecipeSerializer(serializers.ModelSerializer):
 
     def get_ingredients(self, obj):
     #    print(obj.ingredients.values_list('recipe'))
+        pdb.set_trace()
         queryset = Ingredients.objects.filter(recipe=obj.ingredients.values_list('recipe')[0])
         serializer = IngredientSerializer(queryset, many=True)
         return serializer.data
