@@ -52,7 +52,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 class RecipeSerializer(serializers.ModelSerializer):
     author = SlugRelatedField(
         queryset=User.objects.all(),
-        slug_field='name',
+        slug_field='username',
         default=UserSerializer()
     )
 
