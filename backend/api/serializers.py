@@ -37,11 +37,19 @@ class TagSerializer(serializers.ModelSerializer):
         model = Tag
         fields = ('id', 'name', 'color', 'slug')
 
-class UserSerializer(serializers.HyperlinkedModelSerializer):
+class UserSerializer(serializers.ModelSerializer):
     is_subscribed = serializers.SerializerMethodField()
     class Meta:
         model = User
         fields = ('id', 'email', 'username', 'first_name','last_name', 'is_subscribed')
+    def create(self, validated_data):
+        user = User(
+            email=validated_data['email'],
+            username=validated_data['username']
+        )
+        user.set_password(validated_data['password'])
+        user.save()
+        return user
     def get_is_subscribed(self, obj):
         #pdb.set_trace()
         if Subscriptions.objects.filter(following=obj.id).exists():
