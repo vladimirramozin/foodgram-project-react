@@ -59,12 +59,12 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class RecipeSerializer(serializers.ModelSerializer):
-    author = UserSerializer()
-    #author = SlugRelatedField(
-    #    queryset=User.objects.all(),
-    #    slug_field='username',
-    #    default=UserSerializer()
-    #)
+    #author = UserSerializer()
+    author = SlugRelatedField(
+        queryset=User.objects.all(),
+        slug_field='email',
+        default=UserSerializer()
+    )
     tags = serializers.SerializerMethodField()
     ingredients = serializers.SerializerMethodField()   
     is_favorited = serializers.SerializerMethodField()
