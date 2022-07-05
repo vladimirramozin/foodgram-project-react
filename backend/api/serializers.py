@@ -56,15 +56,13 @@ class UserSerializer(serializers.ModelSerializer):
         if Subscriptions.objects.filter(following=obj.id).exists():
             return True
         return False
-
-
 class RecipeSerializer(serializers.ModelSerializer):
-    #author = UserSerializer()
-    author = SlugRelatedField(
-        queryset=User.objects.all(),
-        slug_field='email',
-        default=UserSerializer()
-    )
+    author = UserSerializer()
+   # author = SlugRelatedField(
+   #     queryset=User.objects.all(),
+   #     slug_field='email',
+   #     default=UserSerializer()
+   # )
     tags = serializers.SerializerMethodField()
     ingredients = serializers.SerializerMethodField()   
     is_favorited = serializers.SerializerMethodField()
