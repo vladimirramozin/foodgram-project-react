@@ -57,7 +57,7 @@ class UserSerializer(serializers.ModelSerializer):
             return True
         return False
 class RecipeSerializer(serializers.ModelSerializer):
-    author = UserSerializer()
+    author = UserSerializer(read_only=True)
    # author = SlugRelatedField(
    #     queryset=User.objects.all(),
    #     slug_field='email',
