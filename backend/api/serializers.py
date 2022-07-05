@@ -41,7 +41,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
     is_subscribed = serializers.SerializerMethodField()
     class Meta:
         model = User
-        fields = ('email', 'username', 'first_name','last_name', 'is_subscribed')
+        fields = ('id', 'email', 'username', 'first_name','last_name', 'is_subscribed')
     def get_is_subscribed(self, obj):
         #pdb.set_trace()
         if Subscriptions.objects.filter(following=obj.id).exists():
