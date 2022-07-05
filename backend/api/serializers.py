@@ -41,7 +41,7 @@ class UserSerializer(serializers.ModelSerializer):
     is_subscribed = serializers.SerializerMethodField()
     class Meta:
         model = User
-        fields = ('id', 'email', 'username', 'first_name','last_name', 'is_subscribed', 'password')
+        fields = ('email', 'id', 'username', 'first_name','last_name', 'is_subscribed', 'password')
         extra_kwargs = {'password': {'write_only': True}}
     def create(self, validated_data):
         user = User(
