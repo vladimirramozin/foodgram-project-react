@@ -21,7 +21,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     serializer_class = RecipeSerializer
    # parser_classes = (MultiPartParser, FormParser)
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,) 
+    #permission_classes = (permissions.IsAuthenticatedOrReadOnly,) 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
 
