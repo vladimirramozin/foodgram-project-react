@@ -3,6 +3,7 @@ from django.shortcuts import get_object_or_404
 from recipe.models import (FavoriteRecipies, Ingredient, Ingredients, Recipe,
                            ShoppingCart, Subscriptions, Tag)
 from rest_framework import mixins, permissions, viewsets
+from api.permissions import IsAuthorOrAdminOrReadOnly
 from users.models import User
 
 from .serializers import (FavoriteRecipiesSerializer, IngredientGetSerializer,
@@ -21,7 +22,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     serializer_class = RecipeSerializer
    # parser_classes = (MultiPartParser, FormParser)
-    #permission_classes = (permissions.IsAuthenticatedOrReadOnly,) 
+    permission_classes = (IsAuthorOrAdminOrReadOnly,) 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
 
