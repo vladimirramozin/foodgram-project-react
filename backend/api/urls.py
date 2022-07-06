@@ -27,7 +27,6 @@ router.register('users/subscriptions', SubscriptionsViewSet, basename='subscript
 router.register('recipes/download_shopping_cart', DowloadShoppingCartViewSet, basename='dowload_shopping_cart')
 router.register('recipes/favorite', FavoriteViewSet, basename='favorite')
 router.register('recipes', RecipeViewSet)
-router.register('recipes/(?P<recipes_id>\d+)', RecipeViewSet)
 router.register('recipes/(?P<recipes_id>\d+)/favorite', FavoriteViewSet, basename='favorite')
 router.register('recipes/(?P<recipes_id>\d+)/shopping_cart', ShoppingCartViewSet, basename='shopping_cart')
 router.register('tags', TagViewSet)
