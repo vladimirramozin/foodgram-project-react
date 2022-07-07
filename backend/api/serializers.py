@@ -143,4 +143,11 @@ class ShoppingCartSerializer(serializers.ModelSerializer):
     class Meta:
         model = ShoppingCart
         fields = ()
- 
+
+class ShortRecipeSerializer(serializers.ModelSerializer):
+    image = Base64ImageField()
+    class Meta:
+        model = Recipe
+        read_only_fields = ('author',)
+        fields = ('id', 'name', 'image', 'cooking_time') 
+
