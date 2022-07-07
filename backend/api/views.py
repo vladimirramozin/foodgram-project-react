@@ -25,7 +25,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
    # parser_classes = (MultiPartParser, FormParser)
     permission_classes = (IsAuthorOrAdminOrReadOnly,) 
     def perform_create(self, serializer):
-        serializer.save(author=self.request.user)    @action(
+        serializer.save(author=self.request.user)    
+    @action(
         methods=('get', 'delete',),
         detail=True,
     )
