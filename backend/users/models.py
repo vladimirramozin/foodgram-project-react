@@ -9,7 +9,7 @@ class User(AbstractUser):
     first_name = models.CharField(max_length=10)
     last_name = models.CharField(max_length=150)
     password = models.CharField(max_length=150)
-    
+    subscriptions = models.ManyToManyField('self', related_name='subscriptions',blank=True)
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
 
