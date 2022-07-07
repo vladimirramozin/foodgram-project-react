@@ -54,10 +54,10 @@ class UserSerializer(serializers.ModelSerializer):
         user.save()
         return user
     def get_is_subscribed(self, obj):
-        #pdb.set_trace()
-        if Subscriptions.objects.filter(following=obj.id).exists():
+        if (self.context['view'].request.user.subscriptions.filter(id=obj.id)):
             return True
         return False
+
 class RecipeSerializer(serializers.ModelSerializer):
     author = UserSerializer(read_only=True)
    # author = SlugRelatedField(
