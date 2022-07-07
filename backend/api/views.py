@@ -5,14 +5,15 @@ from recipe.models import (FavoriteRecipies, Ingredient, Ingredients, Recipe,
 from rest_framework import mixins, permissions, viewsets
 from api.permissions import IsAuthorOrAdminOrReadOnly
 from users.models import User
-
-from .serializers import (FavoriteRecipiesSerializer, IngredientGetSerializer,
+from rest_framework.status import HTTP_201_CREATED
+from .serializers import (IngredientGetSerializer, ShortRecipeSerializer,
                           IngredientSerializer, RecipeSerializer,
                           ShoppingCartSerializer, SubscriptionsSerializer,
                           TagSerializer, UserSerializer)
+
 #from rest_framework.parsers import MultiPartParser, FormParser
-
-
+from rest_framework.decorators import action
+from rest_framework.response import Response
 class CreateorListViewSet(mixins.CreateModelMixin, mixins.ListModelMixin,
                           viewsets.GenericViewSet):
     pass
@@ -24,7 +25,23 @@ class RecipeViewSet(viewsets.ModelViewSet):
    # parser_classes = (MultiPartParser, FormParser)
     permission_classes = (IsAuthorOrAdminOrReadOnly,) 
     def perform_create(self, serializer):
-        serializer.save(author=self.request.user)
+        serializer.save(author=self.request.user)    @action(
+        methods=('get', 'delete',),
+        detail=True,
+    )
+    def favorite(self, request, pk=None):
+        recipe = get_object_or_404(Recipe, pk=pk)
+        if request.method == 'GET':
+            FavoriteRecipies.objects.create(user=request.user, favorite=recipe)
+            serializer = ShortRecipeSerializer(recipe)
+            return Response(
+                serializer.data,
+                status=HTTP_201_CREATED,
+            )
+        FavoriteRecipies.objects.filter(user=request.user, favorite=recipe).delete()
+        return Response(status=HTTP_204_NO_CONTENT)
+
+    
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Tag.objects.all()
