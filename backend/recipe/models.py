@@ -136,12 +136,12 @@ class FavoriteRecipies(models.Model):
     class Meta:
         verbose_name = 'Избранные записи'
         verbose_name_plural = 'Избранные записи'
-        constraints = [
-            models.UniqueConstraint(
-                fields=['user', 'favorite'],
-                name='unique_favorite'
-            )
-        ]
+        #constraints = [
+        #    models.UniqueConstraint(
+        #        fields=['user', 'favorite'],
+        #        name='unique_favorite'
+        #    )
+        #]
 
 class ShoppingCart(models.Model):
     pagination_class = None
