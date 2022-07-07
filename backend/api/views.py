@@ -3,7 +3,7 @@ from django.shortcuts import get_object_or_404
 from recipe.models import (FavoriteRecipies, Ingredient, Ingredients, Recipe,
                            ShoppingCart, Subscriptions, Tag)
 from rest_framework import mixins, permissions, viewsets
-from api.permissions import IsAuthorOrAdminOrReadOnly
+from api.permissions import IsAuthorOrAdminOrReadOnly, IsAuthenticated
 from users.models import User
 from rest_framework.status import HTTP_201_CREATED
 from .serializers import (IngredientGetSerializer, ShortRecipeSerializer,
@@ -29,6 +29,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     @action(
         methods=('get', 'delete',),
         detail=True,
+        permission_classes=(IsAuthenticated,),
     )
     def favorite(self, request, pk=None):
         recipe = get_object_or_404(Recipe, pk=pk)
