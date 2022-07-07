@@ -53,8 +53,13 @@ class UserSerializer(serializers.ModelSerializer):
         user.set_password(validated_data['password'])
         user.save()
         return user
+    #def get_is_subscribed(self, obj):
+     #   if (self.context['view'].request.user.subscriptions.filter(id=obj.id)):
+      #      return True
+       # return False
     def get_is_subscribed(self, obj):
-        if (self.context['view'].request.user.subscriptions.filter(id=obj.id)):
+        #pdb.set_trace()
+        if Subscriptions.objects.filter(following=obj.id).exists():
             return True
         return False
 
