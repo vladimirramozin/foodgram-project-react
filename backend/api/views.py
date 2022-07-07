@@ -9,7 +9,7 @@ from rest_framework.status import HTTP_201_CREATED
 from .serializers import (IngredientGetSerializer, ShortRecipeSerializer,
                           IngredientSerializer, RecipeSerializer,
                           ShoppingCartSerializer, SubscriptionsSerializer,
-                          TagSerializer, UserSerializer)
+                          TagSerializer, UserSerializer, FavoriteRecipiesSerializer)
 
 #from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.decorators import action
