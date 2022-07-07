@@ -34,7 +34,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     )
     def favorite(self, request, pk=None):
         recipe = get_object_or_404(Recipe, pk=pk)
-        if request.method == 'GET':
+        if request.method == 'POST':
             FavoriteRecipies.objects.create(user=request.user, favorite=recipe)
             serializer = ShortRecipeSerializer(recipe)
             return Response(
