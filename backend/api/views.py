@@ -1,5 +1,5 @@
 import pdb
-from django.core.paginator import Paginator
+from rest_framework.pagination import PageNumberPagination
 from django.shortcuts import get_object_or_404
 from recipe.models import (FavoriteRecipies, Ingredient, Ingredients, Recipe,
                            ShoppingCart, Subscriptions, Tag)
@@ -66,6 +66,7 @@ class IngredientsViewSet(viewsets.ReadOnlyModelViewSet):
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    pagination_class=PageNumberPagination
     @action(detail=True, methods=['get'])
     def me(self, request):
         serializer = self.get_serializer(request.user)
@@ -76,6 +77,7 @@ class UserViewSet(viewsets.ModelViewSet):
         permission_classes=(IsAuthenticated,),
     )
     def subscriptions(self, request):
+        #pagination_class=PageNumberPagination
         user=request.user
         subscriptions=Subscriptions.objects.filter(user=user).values_list('following_id', flat=True)
         subscriptions_users=User.objects.filter(id__in=subscriptions)
