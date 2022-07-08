@@ -17,13 +17,13 @@ from django.urls import include, path
 #from rest_framework.authtoken import views
 from rest_framework.routers import DefaultRouter
 
-from .views import (DowloadShoppingCartViewSet, FavoriteViewSet,
+from .views import (DowloadShoppingCartViewSet, UserViewSet,
                     IngredientsViewSet, RecipeViewSet, ShoppingCartViewSet,
                     SubscriptionsViewSet, TagViewSet)
 
 router = DefaultRouter()
 
-router.register('users/(?P<user_id>\d+)/subscribe', SubscriptionsViewSet, basename='subscriptions')
+router.register('users', UserViewSet, basename='subscriptions')
 router.register('recipes/download_shopping_cart', DowloadShoppingCartViewSet, basename='dowload_shopping_cart')
 router.register('recipes', RecipeViewSet)
 #router.register('recipes/(?P<recipes_id>\d+)/shopping_cart', ShoppingCartViewSet, basename='shopping_cart')

@@ -10,7 +10,7 @@ from rest_framework.status import HTTP_201_CREATED, HTTP_204_NO_CONTENT
 from .serializers import (IngredientGetSerializer, ShortRecipeSerializer,
                           IngredientSerializer, RecipeSerializer,
                           ShoppingCartSerializer, SubscriptionsSerializer,
-                          TagSerializer, UserSerializer, FavoriteRecipiesSerializer)
+                          TagSerializer, UserSerializer) 
 
 #from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.decorators import action
@@ -45,7 +45,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         return Response(status=HTTP_204_NO_CONTENT)
 
     
-
+  
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
@@ -64,6 +64,24 @@ class IngredientsViewSet(viewsets.ReadOnlyModelViewSet):
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    @action(
+        methods=('post', 'delete',),
+        detail=True,
+        permission_classes=(IsAuthenticated,),
+    )    
+    def subscribe(self, request, pk=None):
+        following = get_object_or_404(User, pk=pk)
+        if request.method == 'POST':
+            Subscriptions.objects.create(user=request.user, following=following)
+            serializer = SubscriptionsSerializer(following)
+            return Response(
+                serializer.data,
+                status=HTTP_201_CREATED,
+            )
+        Subscriptions.objects.filter(user=request.user, following=following).delete()
+        return Response(status=HTTP_204_NO_CONTENT)
+
+
 
 class SubscriptionsViewSet(CreateorListViewSet):
     serializer_class = SubscriptionsSerializer
@@ -75,10 +93,6 @@ class SubscriptionsViewSet(CreateorListViewSet):
     def get_queryset(self):
         subscriptions_instance = Subscriptions.objects.filter(user=self.request.user)
         return subscriptions_instance
-
-class FavoriteViewSet(viewsets.ModelViewSet):
-    queryset = FavoriteRecipies.objects.all()
-    serializer_class = FavoriteRecipiesSerializer
 
 class ShoppingCartViewSet(CreateorListViewSet):
     

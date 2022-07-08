@@ -109,35 +109,29 @@ class RecipeSerializer(serializers.ModelSerializer):
 
 class SubscriptionsSerializer(serializers.ModelSerializer):
 
-    following = SlugRelatedField(
-        queryset=User.objects.all(),
-        slug_field='username',
-    )
+    recipe = serializers.SerializerMethodField()
     recipies_count = serializers.SerializerMethodField()
-
+    is_subscribed = serializers.SerializerMethodField()
     class Meta:
-        model = Subscriptions
-        fields = ('following', 'recipies_count',)
-        validators = [
-            UniqueTogetherValidator(
-                queryset=Subscriptions.objects.all(),
-                fields=['user', 'following']
-            )
-        ]
+        model = User
+        fields = ('email','id', 'username', 'first_name','last_name', 'is_subscribed', 'recipe', 'recipies_count',)
+
     def get_recipies_count(self, obj):
-        queryset = Recipe.objects.filter(author=obj.following.id)
+        count = Recipe.objects.filter(author=obj.id).count()
+        #serializer = RecipeSerializer(queryset, many=True)
+        return count
+    def get_is_subscribed(self, obj):
+        #pdb.set_trace()
+        if Subscriptions.objects.filter(following=obj.id).exists():
+            return True
+        return False
+    def get_recipe(self, obj):
+    #    print(obj.ingredients.values_list('recipe'))
+        #pdb.set_trace()
+        queryset = Recipe.objects.filter(author=obj.id)
         serializer = RecipeSerializer(queryset, many=True)
         return serializer.data
 
-class FavoriteRecipiesSerializer(serializers.ModelSerializer):
-    favorite = serializers.SerializerMethodField()
-    class Meta:
-        model = FavoriteRecipies
-        fields = 'favorite',
-    def get_favorite(self):
-        queryset = FavoriteRecipies.objects.filter(author=self.author.id)
-        serializer = FavoriteRecipiesSerializer(queryset, many=True)
-        return serializer.data
 
 class ShoppingCartSerializer(serializers.ModelSerializer):
     class Meta:
