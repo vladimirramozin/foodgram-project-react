@@ -13,15 +13,25 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from api.views import SubscriptionsViewSet
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
+from .views import (DowloadShoppingCartViewSet, UserViewSet,
+                    IngredientsViewSet, RecipeViewSet, ShoppingCartViewSet,
+                    TagViewSet)
+
 router = DefaultRouter()
-router.register('subscriptions', SubscriptionsViewSet, basename='subscriptions')
+
+router.register('users', UserViewSet)
+router.register('recipes/download_shopping_cart', DowloadShoppingCartViewSet, basename='dowload_shopping_cart')
+router.register('recipes', RecipeViewSet)
+router.register('tags', TagViewSet)
+router.register('ingredients', IngredientsViewSet)
+
+
 
 urlpatterns = [
-    
-
     path('',  include(router.urls)),
+    path('', include('djoser.urls')),
+    path('auth/', include('djoser.urls.authtoken')),
 ]

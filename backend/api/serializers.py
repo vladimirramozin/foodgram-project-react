@@ -129,7 +129,7 @@ class SubscriptionsSerializer(serializers.ModelSerializer):
     #    print(obj.ingredients.values_list('recipe'))
         #pdb.set_trace()
         queryset = Recipe.objects.filter(author=obj.id)
-        serializer = RecipeSerializer(queryset, many=True)
+        serializer = ShortRecipeSerializer(queryset, many=True)
         return serializer.data
 
 

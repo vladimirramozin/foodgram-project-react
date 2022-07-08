@@ -14,28 +14,24 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.urls import include, path
-#from rest_framework.authtoken import views
 from rest_framework.routers import DefaultRouter
 
 from .views import (DowloadShoppingCartViewSet, UserViewSet,
                     IngredientsViewSet, RecipeViewSet, ShoppingCartViewSet,
-                    SubscriptionsViewSet, TagViewSet)
+                    TagViewSet)
 
 router = DefaultRouter()
 
-router.register('users', UserViewSet, basename='subscriptions')
+router.register('users', UserViewSet)
 router.register('recipes/download_shopping_cart', DowloadShoppingCartViewSet, basename='dowload_shopping_cart')
 router.register('recipes', RecipeViewSet)
-#router.register('recipes/(?P<recipes_id>\d+)/shopping_cart', ShoppingCartViewSet, basename='shopping_cart')
 router.register('tags', TagViewSet)
 router.register('ingredients', IngredientsViewSet)
 
 
 
 urlpatterns = [
-    #path('admin/', admin.site.urls),
+    path('',  include(router.urls)),
     path('', include('djoser.urls')),
     path('auth/', include('djoser.urls.authtoken')),
-    path('',  include(router.urls)),
-
 ]

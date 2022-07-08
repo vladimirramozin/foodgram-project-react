@@ -1,3 +1,4 @@
+import pdb
 from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404
 from recipe.models import (FavoriteRecipies, Ingredient, Ingredients, Recipe,
@@ -6,11 +7,12 @@ from rest_framework import mixins, permissions, viewsets
 from rest_framework.permissions import IsAuthenticated
 from api.permissions import IsAuthorOrAdminOrReadOnly
 from users.models import User
-from rest_framework.status import HTTP_201_CREATED, HTTP_204_NO_CONTENT
+from rest_framework.status import HTTP_200_OK, HTTP_201_CREATED, HTTP_204_NO_CONTENT
 from .serializers import (IngredientGetSerializer, ShortRecipeSerializer,
                           IngredientSerializer, RecipeSerializer,
                           ShoppingCartSerializer, SubscriptionsSerializer,
                           TagSerializer, UserSerializer) 
+
 
 #from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.decorators import action
@@ -64,6 +66,25 @@ class IngredientsViewSet(viewsets.ReadOnlyModelViewSet):
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    @action(detail=True, methods=['get'])
+    def me(self, request):
+        serializer = self.get_serializer(request.user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    @action(
+        methods=('get',),
+        detail=False,
+        permission_classes=(IsAuthenticated,),
+    )
+    def subscriptions(self, request):
+        user=request.user
+        subscriptions=Subscriptions.objects.filter(user=user).values_list('following_id', flat=True)
+        subscriptions_users=User.objects.filter(id__in=subscriptions)
+        serializer = SubscriptionsSerializer(subscriptions_users, many=True, context={'request': request})
+        return Response(
+                serializer.data,
+                status=HTTP_200_OK,
+            )
+
     @action(
         methods=('post', 'delete',),
         detail=True,
@@ -81,18 +102,6 @@ class UserViewSet(viewsets.ModelViewSet):
         Subscriptions.objects.filter(user=request.user, following=following).delete()
         return Response(status=HTTP_204_NO_CONTENT)
 
-
-
-class SubscriptionsViewSet(CreateorListViewSet):
-    serializer_class = SubscriptionsSerializer
-    search_fields = ('following__username', )
-
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
-
-    def get_queryset(self):
-        subscriptions_instance = Subscriptions.objects.filter(user=self.request.user)
-        return subscriptions_instance
 
 class ShoppingCartViewSet(CreateorListViewSet):
     
