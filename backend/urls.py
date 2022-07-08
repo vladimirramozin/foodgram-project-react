@@ -21,7 +21,7 @@ from .views import (DowloadShoppingCartViewSet, UserViewSet,
                     TagViewSet)
 
 router = DefaultRouter()
-
+#router.register(r'users', UserViewSet)
 router.register('users', UserViewSet)
 router.register('recipes/download_shopping_cart', DowloadShoppingCartViewSet, basename='dowload_shopping_cart')
 router.register('recipes', RecipeViewSet)
@@ -31,7 +31,7 @@ router.register('ingredients', IngredientsViewSet)
 
 
 urlpatterns = [
-    path('',  include(router.urls)),
     path('', include('djoser.urls')),
+    path('',  include(router.urls)),
     path('auth/', include('djoser.urls.authtoken')),
 ]

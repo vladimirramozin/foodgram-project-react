@@ -66,7 +66,7 @@ class IngredientsViewSet(viewsets.ReadOnlyModelViewSet):
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    pagination_class=PageNumberPagination
+    #pagination_class=PageNumberPagination
     #@action(detail=True, methods=['get'])
     #def me(self, request):
     #    serializer = self.get_serializer(request.user)
