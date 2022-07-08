@@ -70,7 +70,7 @@ class UserViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['get'])
     def me(self, request):
         serializer = self.get_serializer(request.user)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.data, status=HTTP_200_OK)
     @action(
         methods=('get',),
         detail=False,
