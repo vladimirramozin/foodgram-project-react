@@ -52,7 +52,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
         permission_classes=(IsAuthenticated,),
     )
     def shopping_cart(self, request, pk=None):
-       if request.method == 'POST':
+        recipe = get_object_or_404(Recipe, pk=pk)
+        if request.method == 'POST':
            ShoppingCart.objects.create(user=request.user, in_shopping_cart=recipe)
            serializer = ShoppingCartSerializer(recipe)
            return Response(
