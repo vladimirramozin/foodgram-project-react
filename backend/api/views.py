@@ -84,8 +84,8 @@ class UserViewSet(viewsets.ModelViewSet):
         user=request.user
         subscriptions=Subscriptions.objects.filter(user=user).values_list('following_id', flat=True)
         subscriptions_users=User.objects.filter(id__in=subscriptions)
-        result_page = paginator.paginate_queryset(6, subscriptions_users)
-        serializer = SubscriptionsSerializer(result_page, many=True)
+        #result_page = paginator.paginate_queryset(6, subscriptions_users)
+        serializer = SubscriptionsSerializer(subscriptions_users, many=True)
         return paginator.get_paginated_response(
                 serializer.data
             )
