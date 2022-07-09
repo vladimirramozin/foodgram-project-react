@@ -1,5 +1,5 @@
 import pdb
-from rest_framework.pagination import PageNumberPagination
+from rest_framework.pagination import PageNumberPagination,  LimitOffsetPagination
 from django.shortcuts import get_object_or_404
 from recipe.models import (FavoriteRecipies, Ingredient, Ingredients, Recipe,
                            ShoppingCart, Subscriptions, Tag)
@@ -66,7 +66,8 @@ class IngredientsViewSet(viewsets.ReadOnlyModelViewSet):
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    #pagination_class=PageNumberPagination
+    #paginator = PageNumberPagination()
+   # paginator.page_size = 6
     @action(detail=False, methods=['get'])
     def me(self, request):
         serializer = self.get_serializer(request.user)
@@ -77,14 +78,16 @@ class UserViewSet(viewsets.ModelViewSet):
         permission_classes=(IsAuthenticated,),
     )
     def subscriptions(self, request):
-        pagination_class=PageNumberPagination
+        paginator = PageNumberPagination()
+        paginator.page_size = 6
+        #result_page = paginator.paginate_queryset(6, subscriptions_users)
         user=request.user
         subscriptions=Subscriptions.objects.filter(user=user).values_list('following_id', flat=True)
         subscriptions_users=User.objects.filter(id__in=subscriptions)
-        serializer = SubscriptionsSerializer(subscriptions_users, many=True, context={'request': request})
-        return Response(
-                serializer.data,
-                status=HTTP_200_OK,
+        result_page = paginator.paginate_queryset(subscriptions_users, 6)
+        serializer = SubscriptionsSerializer(subscriptions_users, many=True)
+        return paginator.get_paginated_response(
+                serializer.data
             )
 
     @action(

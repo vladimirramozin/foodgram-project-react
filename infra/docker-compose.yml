@@ -15,8 +15,6 @@ services:
 
   backend:
     build: ../backend
-    stdin_open: true
-    tty: true
     restart: always
     volumes:
       - static_value:/app/static/
