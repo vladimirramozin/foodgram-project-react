@@ -46,8 +46,23 @@ class RecipeViewSet(viewsets.ModelViewSet):
         FavoriteRecipies.objects.filter(user=request.user, favorite=recipe).delete()
         return Response(status=HTTP_204_NO_CONTENT)
 
-    
-  
+    @action(
+        methods=('post', 'delete',),
+        detail=True,
+        permission_classes=(IsAuthenticated,),
+    )
+    def shopping_cart(self, request, pk=None):
+       if request.method == 'POST':
+           ShoppingCart.objects.create(user=request.user, in_shopping_cart=recipe)
+           serializer = ShoppingCartSerializer(recipe)
+            return Response(
+                serializer.data,
+                status=HTTP_201_CREATED,
+            )
+        ShoppingCart.objects.filter(user=request.user, in_shopping_cart=recipe).delete()
+        return Response(status=HTTP_204_NO_CONTENT)
+
+
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
@@ -76,10 +91,7 @@ class UserViewSet(viewsets.ModelViewSet):
         detail=False,
         permission_classes=(IsAuthenticated,),
     )
-    def subscriptions(self, request):
-   
-   
-   
+    def subscriptions(self, request):   
         user=request.user
         subscriptions=Subscriptions.objects.filter(user=user).values_list('following_id', flat=True)
         subscriptions_users=User.objects.filter(id__in=subscriptions)
