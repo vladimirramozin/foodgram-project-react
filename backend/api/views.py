@@ -55,7 +55,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
        if request.method == 'POST':
            ShoppingCart.objects.create(user=request.user, in_shopping_cart=recipe)
            serializer = ShoppingCartSerializer(recipe)
-            return Response(
+           return Response(
                 serializer.data,
                 status=HTTP_201_CREATED,
             )
