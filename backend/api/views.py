@@ -66,8 +66,7 @@ class IngredientsViewSet(viewsets.ReadOnlyModelViewSet):
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    #paginator = PageNumberPagination()
-   # paginator.page_size = 6
+   
     @action(detail=False, methods=['get'])
     def me(self, request):
         serializer = self.get_serializer(request.user)
@@ -78,17 +77,14 @@ class UserViewSet(viewsets.ModelViewSet):
         permission_classes=(IsAuthenticated,),
     )
     def subscriptions(self, request):
-        paginator = PageNumberPagination()
-        paginator.page_size = 6
-        #result_page = paginator.paginate_queryset(6, subscriptions_users)
+   
+   
+   
         user=request.user
         subscriptions=Subscriptions.objects.filter(user=user).values_list('following_id', flat=True)
         subscriptions_users=User.objects.filter(id__in=subscriptions)
-        #result_page = paginator.paginate_queryset(6, subscriptions_users)
         serializer = SubscriptionsSerializer(subscriptions_users, many=True)
-        return paginator.get_paginated_response(
-                serializer.data
-            )
+        return Response(serializer.data)
 
     @action(
         methods=('post', 'delete',),
