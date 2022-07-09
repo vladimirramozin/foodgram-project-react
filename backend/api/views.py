@@ -59,8 +59,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 serializer.data,
                 status=HTTP_201_CREATED,
             )
-        ShoppingCart.objects.filter(user=request.user, in_shopping_cart=recipe).delete()
-        return Response(status=HTTP_204_NO_CONTENT)
+       ShoppingCart.objects.filter(user=request.user, in_shopping_cart=recipe).delete()
+       return Response(status=HTTP_204_NO_CONTENT)
 
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
