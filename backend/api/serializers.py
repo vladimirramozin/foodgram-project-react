@@ -109,8 +109,8 @@ class RecipeSerializer(serializers.ModelSerializer):
 
 class SubscriptionsSerializer(serializers.ModelSerializer):
 
-    recipe = serializers.SerializerMethodField()
-    recipies_count = serializers.SerializerMethodField()
+    recipes = serializers.SerializerMethodField()
+    recipes_count = serializers.SerializerMethodField()
     is_subscribed = serializers.SerializerMethodField()
     class Meta:
         model = User
