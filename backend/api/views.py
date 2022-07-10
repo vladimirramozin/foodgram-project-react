@@ -1,5 +1,5 @@
 import pdb
-from rest_framework.pagination import PageNumberPagination,  LimitOffsetPagination
+from .pagination import FoodPagination
 from django.shortcuts import get_object_or_404
 from recipe.models import (FavoriteRecipies, Ingredient, Ingredients, Recipe,
                            ShoppingCart, Subscriptions, Tag)
@@ -82,7 +82,7 @@ class IngredientsViewSet(viewsets.ReadOnlyModelViewSet):
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-   
+    pagination_class = FoodPagination
     @action(detail=False, methods=['get'])
     def me(self, request):
         serializer = self.get_serializer(request.user)
