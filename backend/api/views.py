@@ -33,8 +33,8 @@ class CreateorListViewSet(mixins.CreateModelMixin, mixins.ListModelMixin,
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     serializer_class = RecipeSerializer
-    filter_backend = [filters.djangoFilterBackend],
-    filter_class = RecipeFilter
+    #filter_backend = [filters.djangoFilterBackend],
+    #filter_class = RecipeFilter
    # parser_classes = (MultiPartParser, FormParser)
     permission_classes = (IsAuthorOrAdminOrReadOnly,) 
     def perform_create(self, serializer):
