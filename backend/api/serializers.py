@@ -116,7 +116,7 @@ class SubscriptionsSerializer(serializers.ModelSerializer):
         model = User
         fields = ('email','id', 'username', 'first_name','last_name', 'is_subscribed', 'recipes', 'recipes_count',)
 
-    def get_recipis_count(self, obj):
+    def get_recipes_count(self, obj):
         count = Recipe.objects.filter(author=obj.id).count()
         #serializer = RecipeSerializer(queryset, many=True)
         return count
