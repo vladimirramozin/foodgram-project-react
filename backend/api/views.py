@@ -1,5 +1,5 @@
 import pdb
-from .pagination import FoodPagination
+from rest_framework.pagination import PageNumberPagination
 from django.shortcuts import get_object_or_404
 from recipe.models import (FavoriteRecipies, Ingredient, Ingredients, Recipe,
                            ShoppingCart, Subscriptions, Tag)
@@ -82,7 +82,6 @@ class IngredientsViewSet(viewsets.ReadOnlyModelViewSet):
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    pagination_class = FoodPagination
     @action(detail=False, methods=['get'])
     def me(self, request):
         serializer = self.get_serializer(request.user)
@@ -92,21 +91,26 @@ class UserViewSet(viewsets.ModelViewSet):
         detail=False,
         permission_classes=(IsAuthenticated,),
     )
+    #def subscriptions(self, request):   
+        #user=request.user
+        #subscriptions=Subscriptions.objects.filter(user=user).values_list('following_id', flat=True)
+        #subscriptions_users=User.objects.filter(id__in=subscriptions)
+        #page =  self.paginate_queryset(subscriptions_users)
+        #serializer = SubscriptionsSerializer(page, many=True)
+       # page =  self.paginate_queryset(serializer.data)
+        #return self.get_paginated_response(serializer.data)
+
     def subscriptions(self, request):   
+        paginator = PageNumberPagination()
+        paginator.page_size_query_param = 'limit'
         user=request.user
         subscriptions=Subscriptions.objects.filter(user=user).values_list('following_id', flat=True)
         subscriptions_users=User.objects.filter(id__in=subscriptions)
-        page =  self.paginate_queryset(subscriptions_users)
-        serializer = SubscriptionsSerializer(page, many=True)
-       # page =  self.paginate_queryset(serializer.data)
-        return self.get_paginated_response(serializer.data)
-
-    #def subscriptions(self, request):   
-    #    user=request.user
-    #    subscriptions=Subscriptions.objects.filter(user=user).values_list('following_id', flat=True)
-    #    subscriptions_users=User.objects.filter(id__in=subscriptions)
-    #    serializer = SubscriptionsSerializer(subscriptions_users, many=True)
-    #    return Response(serializer.data, status=HTTP_200_OK)
+        authors =  paginator.paginate_queryset(subscriptions_users, request=request) 
+        serializer = SubscriptionsSerializer(authors, many=True)
+        return paginator.get_paginated_response(
+            serializer.data
+        )
 
     @action(
         methods=('post', 'delete',),
