@@ -54,4 +54,3 @@ requests==2.25.1
 SecretStorage==3.3.1
 six==1.16.0
 sqlparse==0.4.2
-systemd-python==234
