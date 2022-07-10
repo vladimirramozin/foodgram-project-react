@@ -127,7 +127,7 @@ class FavoriteRecipies(models.Model):
                              blank=True,
                              null=True,
                              on_delete=models.CASCADE,
-                             related_name='user')
+                             related_name='favorite')
     favorite = models.ForeignKey(Recipe,
                              blank=True,
                              null=True,

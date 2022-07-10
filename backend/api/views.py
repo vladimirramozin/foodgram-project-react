@@ -3,6 +3,7 @@ from rest_framework.pagination import PageNumberPagination
 from django.shortcuts import get_object_or_404
 from recipe.models import (FavoriteRecipies, Ingredient, Ingredients, Recipe,
                            ShoppingCart, Subscriptions, Tag)
+from .filters import RecipeFilter
 from rest_framework import mixins, permissions, viewsets
 from rest_framework.permissions import IsAuthenticated
 from api.permissions import IsAuthorOrAdminOrReadOnly
@@ -23,10 +24,10 @@ class CreateorListViewSet(mixins.CreateModelMixin, mixins.ListModelMixin,
     pass
 
 
-class ArticleFilter(django_filters.rest_framework.FilterSet):
-    class Meta:
-        model = FavoriteRecipies
-        fields = ['user', 'favorite__id']
+#class RecipeFilter(django_filters.rest_framework.FilterSet):
+#    class Meta:
+#        model = Recipe
+#        fields = ['tags']
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
@@ -37,6 +38,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
    # parser_classes = (MultiPartParser, FormParser)
     permission_classes = (IsAuthorOrAdminOrReadOnly,) 
     def perform_create(self, serializer):
+        pdb.set_trace()
         serializer.save(author=self.request.user)    
     @action(
         methods=('post', 'delete',),
