@@ -96,16 +96,17 @@ class UserViewSet(viewsets.ModelViewSet):
         user=request.user
         subscriptions=Subscriptions.objects.filter(user=user).values_list('following_id', flat=True)
         subscriptions_users=User.objects.filter(id__in=subscriptions)
-        serializer = SubscriptionsSerializer(subscriptions_users, many=True)
-        page =  self.paginate_queryset(serializer.data)
-        return self.get_paginated_response(page)
+        page =  self.paginate_queryset(subscriptions_users)
+        serializer = SubscriptionsSerializer(page, many=True)
+       # page =  self.paginate_queryset(serializer.data)
+        return self.get_paginated_response(serializer.data)
 
     #def subscriptions(self, request):   
-     #   user=request.user
-     #   subscriptions=Subscriptions.objects.filter(user=user).values_list('following_id', flat=True)
-     #   subscriptions_users=User.objects.filter(id__in=subscriptions)
-     #   serializer = SubscriptionsSerializer(subscriptions_users, many=True)
-     #   return Response(serializer.data, status=HTTP_200_OK)
+    #    user=request.user
+    #    subscriptions=Subscriptions.objects.filter(user=user).values_list('following_id', flat=True)
+    #    subscriptions_users=User.objects.filter(id__in=subscriptions)
+    #    serializer = SubscriptionsSerializer(subscriptions_users, many=True)
+    #    return Response(serializer.data, status=HTTP_200_OK)
 
     @action(
         methods=('post', 'delete',),
