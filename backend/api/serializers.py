@@ -116,7 +116,7 @@ class SubscriptionsSerializer(serializers.ModelSerializer):
         model = User
         fields = ('email','id', 'username', 'first_name','last_name', 'is_subscribed', 'recipes', 'recipes_count',)
 
-    def get_recipies_count(self, obj):
+    def get_recipis_count(self, obj):
         count = Recipe.objects.filter(author=obj.id).count()
         #serializer = RecipeSerializer(queryset, many=True)
         return count
@@ -125,7 +125,7 @@ class SubscriptionsSerializer(serializers.ModelSerializer):
         if Subscriptions.objects.filter(following=obj.id).exists():
             return True
         return False
-    def get_recipe(self, obj):
+    def get_recipes(self, obj):
     #    print(obj.ingredients.values_list('recipe'))
         #pdb.set_trace()
         queryset = Recipe.objects.filter(author=obj.id)
