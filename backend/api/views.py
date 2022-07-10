@@ -7,6 +7,7 @@ from rest_framework import mixins, permissions, viewsets
 from rest_framework.permissions import IsAuthenticated
 from api.permissions import IsAuthorOrAdminOrReadOnly
 from users.models import User
+import django_filters
 from rest_framework.status import HTTP_200_OK, HTTP_201_CREATED, HTTP_204_NO_CONTENT
 from .serializers import (IngredientGetSerializer, ShortRecipeSerializer,
                           IngredientSerializer, RecipeSerializer,
@@ -22,9 +23,17 @@ class CreateorListViewSet(mixins.CreateModelMixin, mixins.ListModelMixin,
     pass
 
 
+class ArticleFilter(django_filters.rest_framework.FilterSet):
+    class Meta:
+        model = FavoriteRecipies
+        fields = ['user', 'favorite__id']
+
+
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     serializer_class = RecipeSerializer
+    filter_backend = [filters.djangoFilterBackend],
+    filter_class = RecipeFilter
    # parser_classes = (MultiPartParser, FormParser)
     permission_classes = (IsAuthorOrAdminOrReadOnly,) 
     def perform_create(self, serializer):
@@ -45,6 +54,25 @@ class RecipeViewSet(viewsets.ModelViewSet):
             )
         FavoriteRecipies.objects.filter(user=request.user, favorite=recipe).delete()
         return Response(status=HTTP_204_NO_CONTENT)
+
+    @action(
+        methods=('get',),
+        detail=False,
+        permission_classes=(IsAuthenticated,),
+    )
+
+    #def favorites(self, request):   
+    #    paginator = PageNumberPagination()
+    #    paginator.page_size_query_param = 'limit'
+    #    user=request.user
+    #    user=FavoriteRecipies.objects.filter(user=user).values_list('favorite_id', flat=True)
+    #    favorites=Recipe.objects.filter(id__in=favorite)
+    #    recipes =  paginator.paginate_queryset(favorites, request=request) 
+    #    serializer = ShortRecipeSerializer(recipes, many=True)
+    #    return paginator.get_paginated_response(
+    #        serializer.data
+    #    )
+
 
     @action(
         methods=('post', 'delete',),
@@ -91,14 +119,6 @@ class UserViewSet(viewsets.ModelViewSet):
         detail=False,
         permission_classes=(IsAuthenticated,),
     )
-    #def subscriptions(self, request):   
-        #user=request.user
-        #subscriptions=Subscriptions.objects.filter(user=user).values_list('following_id', flat=True)
-        #subscriptions_users=User.objects.filter(id__in=subscriptions)
-        #page =  self.paginate_queryset(subscriptions_users)
-        #serializer = SubscriptionsSerializer(page, many=True)
-       # page =  self.paginate_queryset(serializer.data)
-        #return self.get_paginated_response(serializer.data)
 
     def subscriptions(self, request):   
         paginator = PageNumberPagination()
