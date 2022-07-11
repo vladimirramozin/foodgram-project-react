@@ -43,7 +43,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     @action(
         methods=('post', 'delete',),
         detail=True
-        permission_classes=(IsAuthenticated,),
+        permission_classe=(IsAuthenticated,),
     )
     def favorite(self, request, pk=None):
         recipe = get_object_or_404(Recipe, pk=pk)
