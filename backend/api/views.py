@@ -42,8 +42,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
         serializer.save(author=self.request.user)    
     @action(
         methods=('post', 'delete',),
-        detail=True
-        permission_classe=(IsAuthenticated,),
+        detail=True,
+        permission_classes=(IsAuthenticated,),
     )
     def favorite(self, request, pk=None):
         recipe = get_object_or_404(Recipe, pk=pk)
