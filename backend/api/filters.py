@@ -1,3 +1,5 @@
+#import pdb
+
 from recipe.models import Recipe 
 from django_filters.rest_framework import (
     AllValuesMultipleFilter,
@@ -23,9 +25,10 @@ class RecipeFilter(FilterSet):
 
 
     def get_is_favorited(self, queryset, name, value):
+        #pdb.set_trace()
         if not value:
             return queryset
         favorites = self.request.user.favorite.all()
         return queryset.filter(
-            pk__in=(favorite.recipe.pk for favorite in favorites)
+            pk__in=(favorite.favorite.pk for favorite in favorites)
         )

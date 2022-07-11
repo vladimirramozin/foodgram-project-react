@@ -1,4 +1,5 @@
 import pdb
+from django_filters.rest_framework.backends import DjangoFilterBackend
 from rest_framework.pagination import PageNumberPagination
 from django.shortcuts import get_object_or_404
 from recipe.models import (FavoriteRecipies, Ingredient, Ingredients, Recipe,
@@ -33,8 +34,8 @@ class CreateorListViewSet(mixins.CreateModelMixin, mixins.ListModelMixin,
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     serializer_class = RecipeSerializer
-    filter_backend = (DjangoFilterBackend,)
-    filter_class = RecipeFilter
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = RecipeFilter
    # parser_classes = (MultiPartParser, FormParser)
     permission_classes = (IsAuthorOrAdminOrReadOnly,) 
     def perform_create(self, serializer):
