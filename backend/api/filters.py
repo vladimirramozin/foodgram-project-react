@@ -8,18 +8,11 @@ from django_filters.rest_framework import (
     FilterSet
 )
 class RecipeFilter(FilterSet):
-    #tags = CharFilter(method='get_tags')
+    tags = CharFilter(field_name='tags__name')
     is_favorited = BooleanFilter(method='get_is_favorited')
     class Meta:
         model = Recipe
         fields = ('author',)
-    #def get_is_favorited(self, queryset, name, value):
-    #    if not value:
-    #        return queryset
-    #    favorites = self.request.user.favorite.all()
-    #    return queryset.filter(
-    #        pk__in=(favorite.recipe.pk for favorite in favorites)
-    #    )
 
 
 
