@@ -8,7 +8,7 @@ from rest_framework import mixins, permissions, viewsets
 from rest_framework.permissions import IsAuthenticated
 from api.permissions import IsAuthorOrAdminOrReadOnly
 from users.models import User
-import django_filters
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.status import HTTP_200_OK, HTTP_201_CREATED, HTTP_204_NO_CONTENT
 from .serializers import (IngredientGetSerializer, ShortRecipeSerializer,
                           IngredientSerializer, RecipeSerializer,
@@ -33,7 +33,7 @@ class CreateorListViewSet(mixins.CreateModelMixin, mixins.ListModelMixin,
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     serializer_class = RecipeSerializer
-    filter_backend = [filters.djangoFilterBackend],
+    filter_backend = (DjangoFilterBackend,)
     filter_class = RecipeFilter
    # parser_classes = (MultiPartParser, FormParser)
     permission_classes = (IsAuthorOrAdminOrReadOnly,) 

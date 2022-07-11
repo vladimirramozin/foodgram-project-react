@@ -9,6 +9,7 @@ cryptography==37.0.2
 defusedxml==0.7.1
 Django==3.2.13
 django-extra-fields==3.0.2
+django-filter==22.1
 django-templated-mail==1.1.1
 djangorestframework==3.12.4
 djangorestframework-simplejwt==4.8.0

@@ -1,3 +1,4 @@
+from recipe.models import Recipe 
 from django_filters.rest_framework import (
     AllValuesMultipleFilter,
     BooleanFilter,
