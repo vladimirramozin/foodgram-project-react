@@ -42,7 +42,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         serializer.save(author=self.request.user)    
     @action(
         methods=('post', 'delete',),
-        detail=True,
+        detail=True
         permission_classes=(IsAuthenticated,),
     )
     def favorite(self, request, pk=None):
