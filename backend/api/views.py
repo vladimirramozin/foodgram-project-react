@@ -38,11 +38,10 @@ class RecipeViewSet(viewsets.ModelViewSet):
    # parser_classes = (MultiPartParser, FormParser)
     permission_classes = (IsAuthorOrAdminOrReadOnly,) 
     def perform_create(self, serializer):
-        pdb.set_trace()
         serializer.save(author=self.request.user)    
     @action(
         methods=('post', 'delete',),
-        detail=True
+        detail=True,
         permission_classes=(IsAuthenticated,),
     )
     def favorite(self, request, pk=None):
