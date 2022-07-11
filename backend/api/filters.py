@@ -3,11 +3,11 @@
 from recipe.models import Recipe 
 from django_filters.rest_framework import (
     BooleanFilter,
-    CharFilter,
+    AllValuesMultipleFilter,
     FilterSet
 )
 class RecipeFilter(FilterSet):
-    tags = CharFilter(field_name='tags__slug')
+    tags = AllValuesMultipleFilter(field_name='tags__slug')
     is_favorited = BooleanFilter(method='get_is_favorited')
     class Meta:
         model = Recipe
