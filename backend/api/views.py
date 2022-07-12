@@ -94,7 +94,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 measurement_unit=Ingredient.objects.filter(id=product['ingredient'])[0].measurement_unit
                 try:
                     if ingredients[Ingredient.objects.filter(id=product['ingredient'])[0].name]:
-                        ingredients[Ingredient.objects.filter(id=product['ingredient'])[0].name]+=recipe.in_shopping_cart.ingredients.values_list('amount')[i][0], measurement_unit
+                        ingredients[Ingredient.objects.filter(id=product['ingredient'])[0].name]=ingredients[Ingredient.objects.filter(id=product['ingredient'])[0].name][0], recipe.in_shopping_cart.ingredients.values_list('amount')[i][0], measurement_unit
                         ingredients['БАРАНИЙ ЛИВЕР']='кайф', 'снуп'
                 except:
                     ingredients[Ingredient.objects.filter(id=product['ingredient'])[0].name] = recipe.in_shopping_cart.ingredients.values_list('amount')[i][0], measurement_unit
