@@ -89,7 +89,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         shopping_cart = ShoppingCart.objects.filter(user=request.user)
         result_cart = {}
         for obj in shopping_cart:
-            recipe=obj.in_shopping_cart:
+            recipe=obj.in_shopping_cart
             name_ingredient=recipe.ingredients__name
             if result_cart[name_ingredient].exists():
                 result_cart[name_ingredient]+=recipe.ingredients.amount
