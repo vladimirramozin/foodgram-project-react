@@ -1,26 +1,28 @@
 import pdb
-from rest_framework import filters
-from django_filters.rest_framework.backends import DjangoFilterBackend
-from rest_framework.pagination import PageNumberPagination
+
+from api.permissions import IsAuthorOrAdminOrReadOnly
 from django.shortcuts import get_object_or_404
+from django_filters.rest_framework import DjangoFilterBackend
+from django_filters.rest_framework.backends import DjangoFilterBackend
 from recipe.models import (FavoriteRecipies, Ingredient, Ingredients, Recipe,
                            ShoppingCart, Subscriptions, Tag)
-from .filters import RecipeFilter
-from rest_framework import mixins, permissions, viewsets
-from rest_framework.permissions import IsAuthenticated, AllowAny
-from api.permissions import IsAuthorOrAdminOrReadOnly
-from users.models import User
-from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.status import HTTP_200_OK, HTTP_201_CREATED, HTTP_204_NO_CONTENT
-from .serializers import (IngredientGetSerializer, ShortRecipeSerializer,
-                          IngredientSerializer, RecipeSerializer,
-                          ShoppingCartSerializer, SubscriptionsSerializer,
-                          TagSerializer, UserSerializer) 
-
-
+from rest_framework import filters, mixins, permissions, viewsets
 #from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.decorators import action
+from rest_framework.pagination import PageNumberPagination
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.status import (HTTP_200_OK, HTTP_201_CREATED,
+                                   HTTP_204_NO_CONTENT)
+from users.models import User
+
+from .filters import RecipeFilter
+from .serializers import (IngredientGetSerializer, IngredientSerializer,
+                          RecipeSerializer, ShoppingCartSerializer,
+                          ShortRecipeSerializer, SubscriptionsSerializer,
+                          TagSerializer, UserSerializer)
+
+
 class CreateorListViewSet(mixins.CreateModelMixin, mixins.ListModelMixin,
                           viewsets.GenericViewSet):
     pass
@@ -63,19 +65,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
         detail=False,
         permission_classes=(IsAuthenticated,),
     )
-
-    #def favorites(self, request):   
-    #    paginator = PageNumberPagination()
-    #    paginator.page_size_query_param = 'limit'
-    #    user=request.user
-    #    user=FavoriteRecipies.objects.filter(user=user).values_list('favorite_id', flat=True)
-    #    favorites=Recipe.objects.filter(id__in=favorite)
-    #    recipes =  paginator.paginate_queryset(favorites, request=request) 
-    #    serializer = ShortRecipeSerializer(recipes, many=True)
-    #    return paginator.get_paginated_response(
-    #        serializer.data
-    #    )
-
 
     @action(
         methods=('post', 'delete',),
