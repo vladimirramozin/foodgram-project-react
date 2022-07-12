@@ -86,7 +86,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         permission_classes=(IsAuthenticated,),
     )
     def download_shopping_cart(self, request):
-        #shopping_cart = ShoppingCart.objects.filter(user=request.user)
+        shopping_cart = ShoppingCart.objects.filter(user=request.user)
         #result_cart = {}
         #for obj in shopping_cart:
         #    recipe=obj.in_shopping_cart
@@ -98,18 +98,18 @@ class RecipeViewSet(viewsets.ModelViewSet):
         #    result_cart[ingredient.ingredient.name]=ingredient.amount, ingredient.ingredient.measurement_unit        
 
         #result_cart_file='\r\n'.join('{} {} {}'.format(key, val[0], val[1]) for key, val in result_cart.items())
-        #result_cart_file='!!!!da!!!!'
-        #file = open("ShoppingCart.txt", "w")
-        #file.write(result_cart_file)
-        #file.close()
-        #file = open("ShoppingCart.txt", "rb");
-        #response = HttpResponse(file.read());
-        #file_type = mimetypes.guess_type("ShoppingCart.txt")
-        #response['Content-Type'] = file_type
-        #response['Content-Length'] = str(os.stat("ShoppingCart.txt").st_size)
-        #response['Content-Disposition'] = "attachment; filename=ShoppingCart.txt"
+        result_cart_file='!!!!da!!!!'
+        file = open("ShoppingCart.txt", "w")
+        file.write(result_cart_file)
+        file.close()
+        file = open("ShoppingCart.txt", "rb");
+        response = HttpResponse(file.read());
+        file_type = mimetypes.guess_type("ShoppingCart.txt")
+        response['Content-Type'] = file_type
+        response['Content-Length'] = str(os.stat("ShoppingCart.txt").st_size)
+        response['Content-Disposition'] = "attachment; filename=ShoppingCart.txt"
         #os.remove(file)
-        return download(request)
+        return response
 
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
