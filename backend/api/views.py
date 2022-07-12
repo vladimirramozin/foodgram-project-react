@@ -60,14 +60,9 @@ class RecipeViewSet(viewsets.ModelViewSet):
         FavoriteRecipies.objects.filter(user=request.user, favorite=recipe).delete()
         return Response(status=HTTP_204_NO_CONTENT)
 
-    @action(
-        methods=('get',),
-        detail=False,
-        permission_classes=(IsAuthenticated,),
-    )
 
     @action(
-        methods=('get', 'delete',),
+        methods=('post', 'delete',),
         detail=True,
         permission_classes=(IsAuthenticated,),
     )
