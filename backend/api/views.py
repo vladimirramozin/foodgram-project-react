@@ -82,7 +82,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         return Response(status=HTTP_204_NO_CONTENT)
     @action(
         methods=('get',),
-        detail=True,
+        detail=False,
         permission_classes=(IsAuthenticated,),
     )
     def download_shopping_cart(self, request):
