@@ -1,4 +1,5 @@
 import pdb
+from rest_framework import filters
 from django_filters.rest_framework.backends import DjangoFilterBackend
 from rest_framework.pagination import PageNumberPagination
 from django.shortcuts import get_object_or_404
@@ -104,6 +105,8 @@ class IngredientsViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Ingredient.objects.all()
     serializer_class = IngredientGetSerializer
     pagination_class = None
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('^name',)
     def get_serializer_class(self):
         if self.action == 'list' or self.action == 'retrieve':
             return IngredientGetSerializer
