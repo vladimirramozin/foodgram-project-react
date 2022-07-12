@@ -67,7 +67,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     )
 
     @action(
-        methods=('post', 'delete',),
+        methods=('get', 'delete',),
         detail=True,
         permission_classes=(IsAuthenticated,),
     )
