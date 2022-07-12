@@ -88,11 +88,12 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def download_shopping_cart(self, request):
         shopping_cart = ShoppingCart.objects.filter(user=request.user)
         result_cart = {}
-        for recipe in shopping_cart:
-            for name_ingredient in recipe.in_shopping_cart__ingredients__ingredient__name:
-                if name_ingredient in result_cart:
+        for recipe in shopping_cart.in_shopping_cart:
+            for name_ingredient in recipe.ingredients__name:
+                if result_cart[name_ingredient].exists():
                     result_cart[name_ingredient]+=recipe.ingredients.amount
-                result_cart[name_ingredient]=recipe.ingredients.amount, name_ingredient.measurement_unit
+                result_cart[name_ingredient]=recipe.ingredients.amount, name_ingredient.measurement_unit        
+        
         result_cart_file='\r\n'.join('{} {} {}'.format(key, val[0], val[1]) for key, val in result_cart.items())
         
         file = open("ShoppingCart.txt", "w")
