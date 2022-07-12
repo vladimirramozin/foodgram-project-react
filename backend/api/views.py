@@ -80,6 +80,11 @@ class RecipeViewSet(viewsets.ModelViewSet):
             )
         ShoppingCart.objects.filter(user=request.user, in_shopping_cart=recipe).delete()
         return Response(status=HTTP_204_NO_CONTENT)
+    @action(
+        methods=('get',),
+        detail=True,
+        permission_classes=(IsAuthenticated,),
+    )
     def download_shopping_cart(self, request):
         #shopping_cart = ShoppingCart.objects.filter(user=request.user)
         #result_cart = {}
