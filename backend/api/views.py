@@ -7,7 +7,7 @@ from recipe.models import (FavoriteRecipies, Ingredient, Ingredients, Recipe,
                            ShoppingCart, Subscriptions, Tag)
 from .filters import RecipeFilter
 from rest_framework import mixins, permissions, viewsets
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from api.permissions import IsAuthorOrAdminOrReadOnly
 from users.models import User
 from django_filters.rest_framework import DjangoFilterBackend
@@ -168,6 +168,7 @@ class ShoppingCartViewSet(CreateorListViewSet):
 class DowloadShoppingCartViewSet(viewsets.ModelViewSet):
     serializer_class = ShoppingCartSerializer
     pagination_class = None
+    permission_classes=(IsAuthenticated,)
     def get_queryset(self):
         shopping_cart = ShoppingCart.objects.filter(user=self.request.user)
         
@@ -187,4 +188,12 @@ class DowloadShoppingCartViewSet(viewsets.ModelViewSet):
            file = open("ShoppingCart.txt", "w")
            file.write(p)
            file.close()
-        return shopping_cart
+           file = open("ShoppingCart.txt", "rb");
+           response = HttpResponse(file.read());
+           file_type = mimetypes.gues_type("ShoppingCart.txt")
+           response['Content-Type'] = file_type
+           response['Content-Length'] = str(os.stat("ShoppingCart.txt").st_size)
+           response['Content-Disposition'] = "attachment; filename=ShoppingCart.txt"
+           os.remove(excel_file_name)
+           return response
+
