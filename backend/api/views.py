@@ -80,24 +80,20 @@ class RecipeViewSet(viewsets.ModelViewSet):
             )
         ShoppingCart.objects.filter(user=request.user, in_shopping_cart=recipe).delete()
         return Response(status=HTTP_204_NO_CONTENT)
-    @action(
-        methods=('get',),
-        detail=False,
-        permission_classes=(IsAuthenticated,),
-    )    
     def download_shopping_cart(self, request):
         shopping_cart = ShoppingCart.objects.filter(user=request.user)
-        result_cart = {}
-        for obj in shopping_cart:
-            recipe=obj.in_shopping_cart
-            ingredients=recipe.ingredients.name
-            for ingredient in ingredients:
-                if result_cart[ingredient.ingredient.name].exists():
-                    result_cart[ingredient.ingredient.name]+=ingredient.amount
-            result_cart[ingredient.ingredient.name]=ingredient.amount, ingredient.ingredient.measurement_unit        
-        
-        result_cart_file='\r\n'.join('{} {} {}'.format(key, val[0], val[1]) for key, val in result_cart.items())
-        
+        #result_cart = {}
+        #for obj in shopping_cart:
+        #    recipe=obj.in_shopping_cart
+        #    pdb.set_trace()
+        #    ingredients=recipe.ingredients.name
+        #    for ingredient in ingredients:
+        #        if result_cart[ingredient.ingredient.name].exists():
+        #            result_cart[ingredient.ingredient.name]+=ingredient.amount
+        #    result_cart[ingredient.ingredient.name]=ingredient.amount, ingredient.ingredient.measurement_unit        
+
+        #result_cart_file='\r\n'.join('{} {} {}'.format(key, val[0], val[1]) for key, val in result_cart.items())
+        result_cart_file='!!!!da!!!!'
         file = open("ShoppingCart.txt", "w")
         file.write(result_cart_file)
         file.close()
@@ -107,8 +103,9 @@ class RecipeViewSet(viewsets.ModelViewSet):
         response['Content-Type'] = file_type
         response['Content-Length'] = str(os.stat("ShoppingCart.txt").st_size)
         response['Content-Disposition'] = "attachment; filename=ShoppingCart.txt"
-        os.remove(excel_file_name)
+        #os.remove(file)
         return response
+
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Tag.objects.all()
