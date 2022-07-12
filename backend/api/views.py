@@ -91,11 +91,10 @@ class RecipeViewSet(viewsets.ModelViewSet):
         for recipe in shopping_cart:
             for i in range(0, len(recipe.in_shopping_cart.ingredients.values_list('ingredient'))): 
                 product = recipe.in_shopping_cart.ingredients.values('ingredient')[i]
+                measurement_unit=Ingredient.objects.filter(id=product['ingredient'])[0].measurement_unit
                 try:
-                    measurement_unit=Ingredient.objects.filter(id=product['ingredient'])[0].measurement_unit
-
                     if ingredients[Ingredient.objects.filter(id=product['ingredient'])[0].name]:
-                        ingredients[Ingredient.objects.filter(id=product['ingredient'])[0].name][0]+=recipe.in_shopping_cart.ingredients.values_list('amount')[i][0]
+                        ingredients[Ingredient.objects.filter(id=product['ingredient'])[0].name]+=recipe.in_shopping_cart.ingredients.values_list('amount')[i][0], measurement_unit
                 except:
                     ingredients[Ingredient.objects.filter(id=product['ingredient'])[0].name] = recipe.in_shopping_cart.ingredients.values_list('amount')[i][0], measurement_unit
 
