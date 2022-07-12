@@ -23,7 +23,6 @@ User = get_user_model()
 
 
 class Ingredient(models.Model):
-    pagination_class = None
     name = models.CharField(max_length=200, verbose_name='название ингридиента')
     measurement_unit = models.CharField(max_length=200, verbose_name='еденица измерения')
     class Meta:
@@ -37,7 +36,6 @@ class Ingredient(models.Model):
 
 
 class Ingredients(models.Model):
-    pagination_class = None
     ingredient = models.ForeignKey(Ingredient,
                              on_delete=models.CASCADE,
                              related_name='Ingredient')

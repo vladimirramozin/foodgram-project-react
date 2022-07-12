@@ -90,10 +90,11 @@ class RecipeViewSet(viewsets.ModelViewSet):
         result_cart = {}
         for obj in shopping_cart:
             recipe=obj.in_shopping_cart
-            name_ingredient=recipe.ingredients
-            if result_cart[name_ingredient__ingredient.name].exists():
-                result_cart[name_ingredient__ingredient.name]+=recipe.ingredients.amount
-            result_cart[name_ingredient__ingredient.name]=recipe.ingredients.amount, name_ingredient.measurement_unit        
+            ingredients=recipe.ingredients
+            for ingredient in ingredients:
+                if result_cart[ingredient.ingredient.name].exists():
+                    result_cart[ingredient.ingredient.name]+=ingredient.amount
+            result_cart[ingredient.ingredient.name]=ingredient.amount, ingredient.ingredient.measurement_unit        
         
         result_cart_file='\r\n'.join('{} {} {}'.format(key, val[0], val[1]) for key, val in result_cart.items())
         
