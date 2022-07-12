@@ -92,10 +92,12 @@ class RecipeViewSet(viewsets.ModelViewSet):
             for i in range(0, len(recipe.in_shopping_cart.ingredients.values_list('ingredient'))): 
                 product = recipe.in_shopping_cart.ingredients.values('ingredient')[i]
                 try:
+                    measurement_unit=Ingredient.objects.filter(id=product['ingredient'])[0].measurement_unit
+
                     if ingredients[Ingredient.objects.filter(id=product['ingredient'])[0].name]:
-                        ingredients[Ingredient.objects.filter(id=product['ingredient'])[0].name]+=recipe.in_shopping_cart.ingredients.values_list('amount')[i][0]
+                        ingredients[Ingredient.objects.filter(id=product['ingredient'])[0].name]+=recipe.in_shopping_cart.ingredients.values_list('amount')[i][0], measurement_unit
                 except:
-                    ingredients[Ingredient.objects.filter(id=product['ingredient'])[0].name] = recipe.in_shopping_cart.ingredients.values_list('amount')[i][0], Ingredient.objects.filter(id=product['ingredient'])[0].measurement_unit
+                    ingredients[Ingredient.objects.filter(id=product['ingredient'])[0].name] = recipe.in_shopping_cart.ingredients.values_list('amount')[i][0], measurement_unit
 
         result_cart='\r\n'.join('{} {} {}'.format(key, val[0], val[1]) for key, val in ingredients.items())
         file = open("ShoppingCart.txt", "w")
