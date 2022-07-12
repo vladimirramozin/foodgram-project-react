@@ -88,8 +88,9 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def download_shopping_cart(self, request):
         shopping_cart = ShoppingCart.objects.filter(user=request.user)
         result_cart = {}
-        for recipe in shopping_cart.in_shopping_cart:
-            for name_ingredient in recipe.ingredients__name:
+        for obj in shopping_cart:
+            for recipe in obj.in_shopping_cart:
+                name_ingredient=recipe.ingredients__name
                 if result_cart[name_ingredient].exists():
                     result_cart[name_ingredient]+=recipe.ingredients.amount
                 result_cart[name_ingredient]=recipe.ingredients.amount, name_ingredient.measurement_unit        
