@@ -1,18 +1,17 @@
 import pdb
-
-from django.core.files.base import ContentFile
-from rest_framework import serializers
 from tabnanny import verbose
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.core.files.base import ContentFile
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils.html import format_html
-from rest_framework.authtoken.models import Token
 from drf_extra_fields.fields import Base64ImageField
+from rest_framework import serializers
+from rest_framework.authtoken.models import Token
 
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
@@ -75,7 +74,7 @@ class Recipe(models.Model):
         on_delete=models.CASCADE,
         related_name='recipe',
         verbose_name='автор'
-   )
+    )
     name = models.CharField(max_length=200, verbose_name='Назавание рецепта')
     text = models.TextField(verbose_name='Описание рецепта')
     image = models.ImageField(upload_to = 'static')
@@ -144,7 +143,6 @@ class FavoriteRecipies(models.Model):
         #]
 
 class ShoppingCart(models.Model):
-    pagination_class = None
     user = models.ForeignKey(User,
                              on_delete=models.CASCADE,
                              related_name='user_shop')

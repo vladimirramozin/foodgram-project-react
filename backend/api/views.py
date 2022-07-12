@@ -1,6 +1,9 @@
+import mimetypes
+import os
 import pdb
 
 from api.permissions import IsAuthorOrAdminOrReadOnly
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from django_filters.rest_framework.backends import DjangoFilterBackend
@@ -77,7 +80,32 @@ class RecipeViewSet(viewsets.ModelViewSet):
             )
         ShoppingCart.objects.filter(user=request.user, in_shopping_cart=recipe).delete()
         return Response(status=HTTP_204_NO_CONTENT)
-
+    @action(
+        methods=('get',),
+        detail=False,
+        permission_classes=(IsAuthenticated,),
+    )    
+    def download_shopping_cart(self, request):
+        shopping_cart = ShoppingCart.objects.filter(user=request.user)
+        result_cart = {}
+        for recipe in shopping_cart:
+            for name_ingredient in recipe.ingredients.ingredient__name:
+                if name_ingredient in result_cart:
+                    result_cart[name_ingredient]+=recipe.ingredients.amount
+                result_cart[name_ingredient]=recipe.ingredients.amount, name_ingredient.measurement_unit
+        result_cart_file='\r\n'.join('{} {} {}'.format(key, val[0], val[1]) for key, val in result_cart.items())
+        
+        file = open("ShoppingCart.txt", "w")
+        file.write(result_cart_file)
+        file.close()
+        file = open("ShoppingCart.txt", "rb");
+        response = HttpResponse(file.read());
+        file_type = mimetypes.guess_type("ShoppingCart.txt")
+        response['Content-Type'] = file_type
+        response['Content-Length'] = str(os.stat("ShoppingCart.txt").st_size)
+        response['Content-Disposition'] = "attachment; filename=ShoppingCart.txt"
+        os.remove(excel_file_name)
+        return response
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Tag.objects.all()
@@ -139,6 +167,7 @@ class UserViewSet(viewsets.ModelViewSet):
         return Response(status=HTTP_204_NO_CONTENT)
 
 
+
 class ShoppingCartViewSet(CreateorListViewSet):
     
     serializer_class = ShoppingCartSerializer
@@ -155,10 +184,8 @@ class DowloadShoppingCartViewSet(viewsets.ModelViewSet):
     permission_classes=(IsAuthenticated,)
     def get_queryset(self):
         shopping_cart = ShoppingCart.objects.filter(user=self.request.user)
-        
         ingredients={}
         for recipe in shopping_cart:
-            #pdb.set_trace()
             for i in range(0, len(recipe.in_shopping_cart.ingredients.values_list('ingredient'))): 
                 product = recipe.in_shopping_cart.ingredients.values('ingredient')[i]
                 try:
