@@ -22,7 +22,7 @@ from .views import (DowloadShoppingCartViewSet, IngredientsViewSet,
 
 router = DefaultRouter()
 #router.register(r'users', UserViewSet)
-router.register('users', UserViewSet)'
+router.register('users', UserViewSet)
 router.register('recipes', RecipeViewSet)
 router.register('tags', TagViewSet)
 router.register('ingredients', IngredientsViewSet)
