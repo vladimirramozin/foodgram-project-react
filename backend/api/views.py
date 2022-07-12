@@ -91,12 +91,12 @@ class RecipeViewSet(viewsets.ModelViewSet):
             for i in range(0, len(recipe.in_shopping_cart.ingredients.values_list('ingredient'))): 
                 product = recipe.in_shopping_cart.ingredients.values('ingredient')[i]
                 try:
-                    if ingredients[Ingredients.objects.filter(id=product['ingredient'])[0].ingredient.name]:
-                        ingredients[Ingredients.objects.filter(id=product['ingredient'])[0].ingredient.name]+=recipe.in_shopping_cart.ingredients.values_list('amount')[i][0]
+                    if ingredients[Ingredient.objects.filter(id=product['ingredient'])[0].name]:
+                        ingredients[Ingredient.objects.filter(id=product['ingredient'])[0].name]+=recipe.in_shopping_cart.ingredients.values_list('amount')[i][0]
                 except:
-                    ingredients[Ingredients.objects.filter(id=product['ingredient'])[0].ingredient.name] = recipe.in_shopping_cart.ingredients.values_list('amount')[i][0], Ingredients.objects.filter(id=product['ingredient'])[0].ingredient.measurement_unit
+                    ingredients[Ingredient.objects.filter(id=product['ingredient'])[0].name] = recipe.in_shopping_cart.ingredients.values_list('amount')[i][0], Ingredient.objects.filter(id=product['ingredient'])[0].measurement_unit
+
         result_cart_file='\r\n'.join('{} {} {}'.format(key, val[0], val[1]) for key, val in result_cart.items())
-        #result_cart_file='!!!!da!!!!'
         file = open("ShoppingCart.txt", "w")
         file.write(result_cart_file)
         file.close()
