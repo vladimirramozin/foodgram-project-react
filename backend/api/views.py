@@ -87,6 +87,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     )
     def download_shopping_cart(self, request):
         shopping_cart = ShoppingCart.objects.filter(user=request.user)
+        ingredients = {}
         for recipe in shopping_cart:
             for i in range(0, len(recipe.in_shopping_cart.ingredients.values_list('ingredient'))): 
                 product = recipe.in_shopping_cart.ingredients.values('ingredient')[i]
