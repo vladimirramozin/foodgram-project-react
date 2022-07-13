@@ -77,12 +77,18 @@ class RecipeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recipe
         read_only_fields = ('author',)
-        fields = ('id', 'author', 'ingredients', 'is_favorited', 'is_in_shopping_cart', 'tags', 'image', 'name', 'text', 'cooking_time') 
+        fields = ('id', 'author', 'ingredients', 'tags', 'is_favorited', 'is_in_shopping_cart', 'image', 'name', 'text', 'cooking_time') 
 
-    #def get_author(self, obj):
-    #    queryset = User.objects.filter(email=obj.email)
-    #    serializer = UserSerializer(queryset, many=True)
-    #    return serializer.data
+    def create(self, validated_data):
+        ingredients = validated_data.pop('ingredients')
+        tags = validated_data.pop('tags')
+        recipe = Recipe.objects.create(**validated_data)
+        for ingredient in ingredients:
+            ing = Ingredients.objects.get_or_create(ingredient=get_object_or_404(Ingredient, id=ingredient['id']), amount=ingredient['amount'],)
+            recipe.ingredients.add(ing[0])
+        for tag in tags:
+            recipe.tags.add(tag)
+        return recipe
     def get_is_in_shopping_cart(self, obj):
         if ShoppingCart.objects.filter(user=self.context['view']
                                  .request.user, in_shopping_cart = obj.id).exists():
@@ -90,30 +96,6 @@ class RecipeSerializer(serializers.ModelSerializer):
         return False         
     def get_is_favorited(self, obj):
 
-        if FavoriteRecipies.objects.filter(user=self.context['view']
-                                 .request.user, favorite = obj.id).exists():
-            return True
-        return False
-
-
-    def get_ingredients(self, obj):
-    #    print(obj.ingredients.values_list('recipe'))
-        #pdb.set_trace()
-        queryset = Ingredients.objects.filter(recipe=obj.id)
-        serializer = IngredientSerializer(queryset, many=True)
-        return serializer.data
-
-    #def get_author(self, obj):
-    #    queryset = User.objects.filter(email=obj.email)
-    #    serializer = UserSerializer(queryset, many=True)
-    #    return serializer.data
-    def get_is_in_shopping_cart(self, obj):
-        if ShoppingCart.objects.filter(user=self.context['view']
-                                 .request.user, in_shopping_cart = obj.id).exists():
-            return True
-        return False         
-    def get_is_favorited(self, obj):
-        
         if FavoriteRecipies.objects.filter(user=self.context['view']
                                  .request.user, favorite = obj.id).exists():
             return True
