@@ -1,3 +1,4 @@
+import pdb
 from pkgutil import read_code
 
 from drf_extra_fields.fields import Base64ImageField
@@ -10,7 +11,6 @@ from users.models import User
 
 
 class IngredientSerializer(serializers.ModelSerializer):
-    
     name=serializers.SerializerMethodField()
     measurement_unit=serializers.SerializerMethodField()
     class Meta:
@@ -95,6 +95,30 @@ class RecipeSerializer(serializers.ModelSerializer):
             return True
         return False
 
+
+    def get_ingredients(self, obj):
+    #    print(obj.ingredients.values_list('recipe'))
+        #pdb.set_trace()
+        queryset = Ingredients.objects.filter(recipe=obj.id)
+        serializer = IngredientSerializer(queryset, many=True)
+        return serializer.data
+
+    #def get_author(self, obj):
+    #    queryset = User.objects.filter(email=obj.email)
+    #    serializer = UserSerializer(queryset, many=True)
+    #    return serializer.data
+    def get_is_in_shopping_cart(self, obj):
+        if ShoppingCart.objects.filter(user=self.context['view']
+                                 .request.user, in_shopping_cart = obj.id).exists():
+            return True
+        return False         
+    def get_is_favorited(self, obj):
+        
+        if FavoriteRecipies.objects.filter(user=self.context['view']
+                                 .request.user, favorite = obj.id).exists():
+            return True
+        return False
+
 class SubscriptionsSerializer(serializers.ModelSerializer):
 
     recipes = serializers.SerializerMethodField()
@@ -120,4 +144,16 @@ class SubscriptionsSerializer(serializers.ModelSerializer):
         serializer = ShortRecipeSerializer(queryset, many=True)
         return serializer.data
 
+
+class ShoppingCartSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ShoppingCart
+        fields = ()
+
+class ShortRecipeSerializer(serializers.ModelSerializer):
+    image = Base64ImageField()
+    class Meta:
+        model = Recipe
+        read_only_fields = ('author',)
+        fields = ('id', 'name', 'image', 'cooking_time') 
 
