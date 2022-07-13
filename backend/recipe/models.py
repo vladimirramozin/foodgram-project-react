@@ -1,15 +1,11 @@
-import pdb
 from tabnanny import verbose
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.core.files.base import ContentFile
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from django.utils.html import format_html
-from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
 from rest_framework.authtoken.models import Token
 

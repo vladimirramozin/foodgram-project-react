@@ -1,19 +1,15 @@
 
-from recipe.models import Recipe 
-from django_filters.rest_framework import (
-    BooleanFilter,
-    AllValuesMultipleFilter,
-    FilterSet
-)
+from django_filters.rest_framework import (AllValuesMultipleFilter,
+                                           BooleanFilter, FilterSet)
+from recipe.models import Recipe
+
+
 class RecipeFilter(FilterSet):
     tags = AllValuesMultipleFilter(field_name='tags__slug')
     is_favorited = BooleanFilter(method='get_is_favorited')
     class Meta:
         model = Recipe
         fields = ('author',)
-
-
-
 
     def get_is_favorited(self, queryset, name, value):
         #pdb.set_trace()

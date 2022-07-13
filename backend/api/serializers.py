@@ -1,17 +1,16 @@
 import pdb
 from pkgutil import read_code
 
+from drf_extra_fields.fields import Base64ImageField
 from recipe.models import (FavoriteRecipies, Ingredient, Ingredients, Recipe,
                            ShoppingCart, Subscriptions, Tag)
 from rest_framework import serializers
 from rest_framework.relations import SlugRelatedField
 from rest_framework.validators import UniqueTogetherValidator
 from users.models import User
-from rest_framework import serializers    
-from drf_extra_fields.fields import Base64ImageField
+
 
 class IngredientSerializer(serializers.ModelSerializer):
-    
     name=serializers.SerializerMethodField()
     measurement_unit=serializers.SerializerMethodField()
     class Meta:
@@ -70,8 +69,8 @@ class RecipeSerializer(serializers.ModelSerializer):
    #     slug_field='email',
    #     default=UserSerializer()
    # )
-    tags = serializers.SerializerMethodField()
-    ingredients = serializers.SerializerMethodField()   
+    tags = serializers.PrimaryKeyRelatedField(many=True, queryset=Tag.objects.all())
+    ingredients = IngredientSerializer(many=True)
     is_favorited = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()
     image = Base64ImageField()
@@ -79,10 +78,23 @@ class RecipeSerializer(serializers.ModelSerializer):
         model = Recipe
         read_only_fields = ('author',)
         fields = ('id', 'author', 'ingredients', 'is_favorited', 'is_in_shopping_cart', 'tags', 'image', 'name', 'text', 'cooking_time') 
-    def get_tags(self, obj):
-        queryset = Tag.objects.filter(recipe=obj.id)
-        serializer = TagSerializer(queryset, many=True)
-        return serializer.data
+
+    #def get_author(self, obj):
+    #    queryset = User.objects.filter(email=obj.email)
+    #    serializer = UserSerializer(queryset, many=True)
+    #    return serializer.data
+    def get_is_in_shopping_cart(self, obj):
+        if ShoppingCart.objects.filter(user=self.context['view']
+                                 .request.user, in_shopping_cart = obj.id).exists():
+            return True
+        return False         
+    def get_is_favorited(self, obj):
+
+        if FavoriteRecipies.objects.filter(user=self.context['view']
+                                 .request.user, favorite = obj.id).exists():
+            return True
+        return False
+
 
     def get_ingredients(self, obj):
     #    print(obj.ingredients.values_list('recipe'))
