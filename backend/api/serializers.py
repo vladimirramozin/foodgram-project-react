@@ -85,6 +85,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         tags = validated_data.pop('tags')
         recipe = Recipe.objects.create(**validated_data)
         for ingredient in ingredients:
+            pdb.set_trace()
             ing = Ingredients.objects.get_or_create(ingredient=get_object_or_404(Ingredient, id=ingredient['id']), amount=ingredient['amount'],)
             recipe.ingredients.add(ing[0])
         for tag in tags:
