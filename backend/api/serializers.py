@@ -1,6 +1,7 @@
 import pdb
 from pkgutil import read_code
 
+from django.shortcuts import get_object_or_404
 from drf_extra_fields.fields import Base64ImageField
 from recipe.models import (FavoriteRecipies, Ingredient, Ingredients, Recipe,
                            ShoppingCart, Subscriptions, Tag)
