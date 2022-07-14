@@ -98,11 +98,23 @@ class RecipeSerializer(serializers.ModelSerializer):
         for tag in tags:
             recipe.tags.add(tag)
         return recipe
-    def get_is_in_shopping_cart(self, obj):
+    def create(self, validated_data):
+        ingredients = validated_data.pop('ingredients')
+        tags = validated_data.pop('tags')
+        recipe = Recipe.objects.create(**validated_data)
+        for ingredient in ingredients:
+            #pdb.set_trace()
+            ing = Ingredients.objects.get_or_create(ingredient=get_object_or_404(Ingredient, id=ingredient['id']), amount=ingredient['amount'],)
+            recipe.ingredients.add(ing[0])
+        for tag in tags:
+            recipe.tags.add(tag)
+        return recipe   
+   def get_is_in_shopping_cart(self, obj):
         if ShoppingCart.objects.filter(user=self.context['view']
                                  .request.user, in_shopping_cart = obj.id).exists():
             return True
-        return False         
+        return False   
+
     def get_is_favorited(self, obj):
 
         if FavoriteRecipies.objects.filter(user=self.context['view']
