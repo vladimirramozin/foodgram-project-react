@@ -20,7 +20,6 @@ class IngredientSerializer(serializers.ModelSerializer):
         extra_kwargs = {
             'id': {
                 'read_only': False, 
-                'required': True
              }
         }
 
@@ -43,7 +42,13 @@ class IngredientGetSerializer(serializers.ModelSerializer):
 class TagSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tag
-        fields = ('id', 'name', 'color', 'slug')
+        fields = ('id', 'name', 'color', 'slug')        
+        extra_kwargs = {
+            'id': {
+                'read_only': False, 
+             }
+        }
+
 
 class UserSerializer(serializers.ModelSerializer):
     is_subscribed = serializers.SerializerMethodField()
