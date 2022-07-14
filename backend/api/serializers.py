@@ -17,6 +17,12 @@ class IngredientSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ingredients
         fields = ('id', 'name', 'measurement_unit', 'amount')
+        extra_kwargs = {
+            'id': {
+                'read_only': False
+             }
+        }
+
     def get_measurement_unit(self, obj):
         queryset = Ingredient.objects.filter(name=obj.ingredient)
         serializer = IngredientGetSerializer(queryset, many=True)
@@ -25,6 +31,7 @@ class IngredientSerializer(serializers.ModelSerializer):
         queryset = Ingredient.objects.filter(name=obj.ingredient)
         serializer = IngredientGetSerializer(queryset, many=True)
         return serializer.data[0]['name']
+
 
 class IngredientGetSerializer(serializers.ModelSerializer):
     class Meta:
@@ -85,7 +92,6 @@ class RecipeSerializer(serializers.ModelSerializer):
         tags = validated_data.pop('tags')
         recipe = Recipe.objects.create(**validated_data)
         for ingredient in ingredients:
-        
             ing = Ingredients.objects.get_or_create(ingredient=get_object_or_404(Ingredient, id=ingredient['id']), amount=ingredient['amount'],)
             recipe.ingredients.add(ing[0])
         for tag in tags:
@@ -97,7 +103,6 @@ class RecipeSerializer(serializers.ModelSerializer):
         tags = validated_data.pop('tags')
         recipe = Recipe.objects.create(**validated_data)
         for ingredient in ingredients:
-        
             ing = Ingredients.objects.get_or_create(ingredient=get_object_or_404(Ingredient, id=ingredient['id']), amount=ingredient['amount'],)
             recipe.ingredients.add(ing[0])
         for tag in tags:
