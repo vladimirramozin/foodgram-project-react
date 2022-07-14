@@ -75,8 +75,35 @@ class UserSerializer(serializers.ModelSerializer):
         if Subscriptions.objects.filter(following=obj.id).exists():
             return True
         return False
+class RecipeReadSerializer(serializers.ModelSerializer):
+    author = UserSerializer(read_only=True)
+   # author = SlugRelatedField(
+   #     queryset=User.objects.all(),
+   #     slug_field='email',
+   #     default=UserSerializer()
+   # )
+    tags = TagSerializer(many=True)
+    ingredients = IngredientSerializer(many=True)
+    is_favorited = serializers.SerializerMethodField()
+    is_in_shopping_cart = serializers.SerializerMethodField()
+    image = Base64ImageField()
+    class Meta:
+        model = Recipe
+        read_only_fields = ('author',)
+        fields = ('id', 'author', 'ingredients', 'tags', 'is_favorited', 'is_in_shopping_cart', 'image', 'name', 'text', 'cooking_time') 
 
-class RecipeSerializer(serializers.ModelSerializer):
+    def get_is_in_shopping_cart(self, obj):
+        if ShoppingCart.objects.filter(user=self.context['request'].user, in_shopping_cart = obj.id).exists():
+            return True
+        return False   
+
+    def get_is_favorited(self, obj):
+        #pdb.set_trace()
+        if FavoriteRecipies.objects.filter(user=self.context['request'].user, favorite = obj.id).exists():
+            return True
+        return False
+
+class RecipeWriteSerializer(serializers.ModelSerializer):
     author = UserSerializer(read_only=True)
    # author = SlugRelatedField(
    #     queryset=User.objects.all(),
@@ -90,13 +117,11 @@ class RecipeSerializer(serializers.ModelSerializer):
         ),
     )
     ingredients = IngredientSerializer(many=True)
-    is_favorited = serializers.SerializerMethodField()
-    is_in_shopping_cart = serializers.SerializerMethodField()
     image = Base64ImageField()
     class Meta:
         model = Recipe
         read_only_fields = ('author',)
-        fields = ('id', 'author', 'ingredients', 'tags', 'is_favorited', 'is_in_shopping_cart', 'image', 'name', 'text', 'cooking_time') 
+        fields = ('id', 'author', 'ingredients', 'tags', 'image', 'name', 'text', 'cooking_time') 
 
 
     def create(self, validated_data):
@@ -113,7 +138,7 @@ class RecipeSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         instance.ingredients.clear()
         ingredients = validated_data.pop('ingredients')
-        #tags = validated_data.pop('tags')
+        tags = validated_data.pop('tags')
         recipe = Recipe.objects.create(**validated_data)
         for ingredient in ingredients:
             ing = Ingredients.objects.get_or_create(ingredient=get_object_or_404(Ingredient, id=ingredient['id']), amount=ingredient['amount'],)
@@ -127,18 +152,6 @@ class RecipeSerializer(serializers.ModelSerializer):
         instance.save()
         return instance
 
-    def get_is_in_shopping_cart(self, obj):
-        if ShoppingCart.objects.filter(user=self.context['view']
-                                 .request.user, in_shopping_cart = obj.id).exists():
-            return True
-        return False   
-
-    def get_is_favorited(self, obj):
-
-        if FavoriteRecipies.objects.filter(user=self.context['view']
-                                 .request.user, favorite = obj.id).exists():
-            return True
-        return False
 
 class SubscriptionsSerializer(serializers.ModelSerializer):
 
@@ -177,4 +190,3 @@ class ShortRecipeSerializer(serializers.ModelSerializer):
         model = Recipe
         read_only_fields = ('author',)
         fields = ('id', 'name', 'image', 'cooking_time') 
-
