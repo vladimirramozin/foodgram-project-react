@@ -109,7 +109,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         for tag in tags:
             recipe.tags.add(tag)
         return recipe   
-   def get_is_in_shopping_cart(self, obj):
+    def get_is_in_shopping_cart(self, obj):
         if ShoppingCart.objects.filter(user=self.context['view']
                                  .request.user, in_shopping_cart = obj.id).exists():
             return True
