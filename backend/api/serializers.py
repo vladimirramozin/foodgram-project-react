@@ -19,7 +19,8 @@ class IngredientSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'measurement_unit', 'amount')
         extra_kwargs = {
             'id': {
-                'read_only': False
+                'read_only': False, 
+                'required': True
              }
         }
 
@@ -109,12 +110,12 @@ class RecipeSerializer(serializers.ModelSerializer):
             recipe.tags.add(tag)
         return recipe
 
-
     def get_is_in_shopping_cart(self, obj):
         if ShoppingCart.objects.filter(user=self.context['view']
                                  .request.user, in_shopping_cart = obj.id).exists():
             return True
-        return False         
+        return False   
+
     def get_is_favorited(self, obj):
 
         if FavoriteRecipies.objects.filter(user=self.context['view']
