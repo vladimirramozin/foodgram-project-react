@@ -83,7 +83,12 @@ class RecipeSerializer(serializers.ModelSerializer):
    #     slug_field='email',
    #     default=UserSerializer()
    # )
-    tags = serializers.PrimaryKeyRelatedField(many=True, queryset=Tag.objects.all())
+    tags = serializers.ListField(
+        child=SlugRelatedField(
+            slug_field='id',
+            queryset=Tag.objects.all(),
+        ),
+    )
     ingredients = IngredientSerializer(many=True)
     is_favorited = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()
@@ -92,6 +97,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         model = Recipe
         read_only_fields = ('author',)
         fields = ('id', 'author', 'ingredients', 'tags', 'is_favorited', 'is_in_shopping_cart', 'image', 'name', 'text', 'cooking_time') 
+
 
     def create(self, validated_data):
         ingredients = validated_data.pop('ingredients')
@@ -102,18 +108,24 @@ class RecipeSerializer(serializers.ModelSerializer):
             recipe.ingredients.add(ing[0])
         for tag in tags:
             recipe.tags.add(tag)
-        return recipe    
+        return recipe
 
-    def update(self, validated_data):
+    def update(self, instance, validated_data):
+        instance.ingredients.clear()
         ingredients = validated_data.pop('ingredients')
-        tags = validated_data.pop('tags')
+        #tags = validated_data.pop('tags')
         recipe = Recipe.objects.create(**validated_data)
         for ingredient in ingredients:
             ing = Ingredients.objects.get_or_create(ingredient=get_object_or_404(Ingredient, id=ingredient['id']), amount=ingredient['amount'],)
-            recipe.ingredients.add(ing[0])
+            instance.ingredients.add(ing[0])
         for tag in tags:
             recipe.tags.add(tag)
-        return recipe
+        instance.image = validated_data['image']
+        instance.name = validated_data['name']
+        instance.text = validated_data['text']
+        instance.cooking_time = validated_data['cooking_time']
+        instance.save()
+        return instance
 
     def get_is_in_shopping_cart(self, obj):
         if ShoppingCart.objects.filter(user=self.context['view']

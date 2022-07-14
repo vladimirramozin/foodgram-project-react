@@ -16,6 +16,8 @@ services:
   backend:
     build: ../backend
     restart: always
+    restart: always
+    stdin_open: true
     volumes:
       - static_value:/app/static/
       - media_value:/app/media/
