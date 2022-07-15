@@ -90,7 +90,7 @@ class RecipeReadSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recipe
         read_only_fields = ('author',)
-        fields = ('id', 'author', 'ingredients', 'tags', 'is_favorited', 'is_in_shopping_cart', 'image', 'name', 'text', 'cooking_time') 
+        fields = ('id', 'tags', 'author', 'ingredients',  'is_favorited', 'is_in_shopping_cart', 'name', 'image', 'text', 'cooking_time') 
 
     def get_is_in_shopping_cart(self, obj):
         if ShoppingCart.objects.filter(user=self.context['request'].user, in_shopping_cart = obj.id).exists():
