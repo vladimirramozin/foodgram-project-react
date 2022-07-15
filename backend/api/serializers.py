@@ -145,6 +145,7 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
             instance.ingredients.add(ing[0])
         for tag in tags:
             recipe.tags.add(tag)
+        pdb.set_trace()
         instance.image = validated_data['image']
         instance.name = validated_data['name']
         instance.text = validated_data['text']
