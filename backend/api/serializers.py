@@ -43,11 +43,11 @@ class TagSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tag
         fields = ('id', 'name', 'color', 'slug')        
-        extra_kwargs = {
-            'id': {
-                'read_only': False, 
-             }
-        }
+        #extra_kwargs = {
+        #    'id': {
+        #        'read_only': False, 
+        #     }
+        #}
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -90,7 +90,39 @@ class RecipeReadSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recipe
         read_only_fields = ('author',)
-        fields = ('id', 'author', 'ingredients', 'tags', 'is_favorited', 'is_in_shopping_cart', 'image', 'name', 'text', 'cooking_time') 
+        fields = ('id', 'tags', 'author', 'ingredients',  'is_favorited', 'is_in_shopping_cart', 'name', 'image', 'text', 'cooking_time') 
+
+    def get_is_in_shopping_cart(self, obj):
+        if ShoppingCart.objects.filter(user=self.context['request'].user, in_shopping_cart = obj.id).exists():
+            return True
+        return False   
+
+    def get_is_favorited(self, obj):
+        #pdb.set_trace()
+        if FavoriteRecipies.objects.filter(user=self.context['request'].user, favorite = obj.id).exists():
+            return True
+        return False
+
+class RecipeWriteSerializer(serializers.ModelSerializer):
+    author = UserSerializer(read_only=True)
+   # author = SlugRelatedField(
+   #     queryset=User.objects.all(),
+   #     slug_field='email',
+   #     default=UserSerializer()
+   # )
+    tags = serializers.ListField(
+        child=SlugRelatedField(
+            slug_field='id',
+            queryset=Tag.objects.all(),
+        ),
+    )
+    ingredients = IngredientSerializer(many=True)
+    image = Base64ImageField()
+    class Meta:
+        model = Recipe
+        read_only_fields = ('author',)
+        fields = ('id', 'tags', 'author', 'ingredients',  'image', 'name', 'text', 'cooking_time') 
+
 
     def get_is_in_shopping_cart(self, obj):
         if ShoppingCart.objects.filter(user=self.context['request'].user, in_shopping_cart = obj.id).exists():

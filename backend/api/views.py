@@ -21,11 +21,10 @@ from users.models import User
 
 from .filters import RecipeFilter
 from .serializers import (IngredientGetSerializer, IngredientSerializer,
-                          RecipeWriteSerializer, RecipeReadSerializer, 
-                          ShoppingCartSerializer,
-                          ShortRecipeSerializer, SubscriptionsSerializer,
-                          TagSerializer, UserSerializer)
-
+                          RecipeReadSerializer, RecipeWriteSerializer,
+                          ShoppingCartSerializer, ShortRecipeSerializer,
+                          SubscriptionsSerializer, TagSerializer,
+                          UserSerializer)
 
 class CreateorListViewSet(mixins.CreateModelMixin, mixins.ListModelMixin,
                           viewsets.GenericViewSet):
@@ -243,4 +242,3 @@ class DowloadShoppingCartViewSet(viewsets.ModelViewSet):
            response['Content-Disposition'] = "attachment; filename=ShoppingCart.txt"
            os.remove(excel_file_name)
            return response
-
