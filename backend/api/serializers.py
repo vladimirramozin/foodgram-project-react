@@ -145,13 +145,13 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
             instance.ingredients.add(ing[0])
         for tag in tags:
             recipe.tags.add(tag)
-        if validated_data['image'].exists():
+        try:
             instance.image = validated_data['image']
-        if validated_data['image'].exists():
+        try:
             instance.name = validated_data['name']
-        if validated_data['image'].exists():
+        try:
             instance.text = validated_data['text']
-        if validated_data['image'].exists():
+        try:
             instance.cooking_time = validated_data['cooking_time']
         instance.save()
         return instance
