@@ -141,29 +141,12 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
 
         ingredients = validated_data.pop('ingredients')
         tags = validated_data.pop('tags')
-        recipe = Recipe.objects.create(**validated_data)
+        super().update(instance, validated_data)
         for ingredient in ingredients:
             ing = Ingredients.objects.get_or_create(ingredient=get_object_or_404(Ingredient, id=ingredient['id']), amount=ingredient['amount'],)
             instance.ingredients.add(ing[0])
         for tag in tags:
-            recipe.tags.add(tag)
-        try:
-            instance.image = validated_data['image']
-        except:
-            pass
-        try:
-            instance.name = validated_data['name']
-        except: 
-            pass
-        try:
-            instance.text = validated_data['text']
-        except: 
-            pass
-        try:
-            instance.cooking_time = validated_data['cooking_time']
-        except: 
-            pass
-        instance.save()
+            instance.tags.add(tag)
         return instance
 
 

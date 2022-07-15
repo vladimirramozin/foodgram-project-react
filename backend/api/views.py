@@ -61,6 +61,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
             serializer.data, status=HTTP_201_CREATED, headers=headers
         )
     def update(self, request, *args, **kwargs):
+        #pdb.set_trace()
         partial = kwargs.pop('partial', True)
         instance = self.get_object()
         serializer = self.get_serializer(
