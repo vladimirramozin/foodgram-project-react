@@ -146,7 +146,7 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
         for tag in tags:
             recipe.tags.add(tag)
         try:
-          instance.image = validated_data['image']
+            instance.image = validated_data['image']
         instance.name = validated_data['name']
         instance.text = validated_data['text']
         instance.cooking_time = validated_data['cooking_time']
