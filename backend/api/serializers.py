@@ -121,38 +121,6 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recipe
         read_only_fields = ('author',)
-        fields = ('id', 'tags', 'author', 'ingredients',  'image', 'name', 'text', 'cooking_time') 
-
-
-    def get_is_in_shopping_cart(self, obj):
-        if ShoppingCart.objects.filter(user=self.context['request'].user, in_shopping_cart = obj.id).exists():
-            return True
-        return False   
-
-    def get_is_favorited(self, obj):
-        #pdb.set_trace()
-        if FavoriteRecipies.objects.filter(user=self.context['request'].user, favorite = obj.id).exists():
-            return True
-        return False
-
-class RecipeWriteSerializer(serializers.ModelSerializer):
-    author = UserSerializer(read_only=True)
-   # author = SlugRelatedField(
-   #     queryset=User.objects.all(),
-   #     slug_field='email',
-   #     default=UserSerializer()
-   # )
-    tags = serializers.ListField(
-        child=SlugRelatedField(
-            slug_field='id',
-            queryset=Tag.objects.all(),
-        ),
-    )
-    ingredients = IngredientSerializer(many=True)
-    image = Base64ImageField()
-    class Meta:
-        model = Recipe
-        read_only_fields = ('author',)
         fields = ('author', 'ingredients', 'tags', 'image', 'name', 'text', 'cooking_time') 
 
 
@@ -177,10 +145,14 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
             instance.ingredients.add(ing[0])
         for tag in tags:
             recipe.tags.add(tag)
-        instance.image = validated_data['image']
-        instance.name = validated_data['name']
-        instance.text = validated_data['text']
-        instance.cooking_time = validated_data['cooking_time']
+        if validated_data['image'].exists():
+            instance.image = validated_data['image']
+        if validated_data['image'].exists():
+            instance.name = validated_data['name']
+        if validated_data['image'].exists():
+            instance.text = validated_data['text']
+        if validated_data['image'].exists():
+            instance.cooking_time = validated_data['cooking_time']
         instance.save()
         return instance
 
@@ -189,7 +161,7 @@ class SubscriptionsSerializer(serializers.ModelSerializer):
 
     recipes = serializers.SerializerMethodField()
     recipes_count = serializers.SerializerMethodField()
-    is_subscribed = serializers.SerializerMethodField()
+    is_subscribed = serializers.SerializerMe	thodField()
     class Meta:
         model = User
         fields = ('email','id', 'username', 'first_name','last_name', 'is_subscribed', 'recipes', 'recipes_count',)
