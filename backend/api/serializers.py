@@ -147,12 +147,20 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
             recipe.tags.add(tag)
         try:
             instance.image = validated_data['image']
+        except:
+            pass
         try:
             instance.name = validated_data['name']
+        except: 
+            pass
         try:
             instance.text = validated_data['text']
+        except: 
+            pass
         try:
             instance.cooking_time = validated_data['cooking_time']
+        except: 
+            pass
         instance.save()
         return instance
 
