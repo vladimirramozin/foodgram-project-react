@@ -147,7 +147,7 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
             instance.ingredients.add(ing[0])
         for tag in tags:
             recipe.tags.add(tag)
-        instance.author = validated_data['author']
+        #instance.author = validated_data['author']
         try:
             instance.image = validated_data['image']
         except:
