@@ -73,6 +73,7 @@ DJOSER = {
         'user_create': 'api.serializers.UserSerializer',
         'user': 'api.serializers.UserSerializer',
         'set_username': 'api.serializers.UserSerializer',
+        'set_password_retype': 'api.serializers.UserSerializer',
     },
 }
 
