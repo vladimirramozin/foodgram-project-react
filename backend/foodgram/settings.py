@@ -40,9 +40,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'recipe.apps.RecipeConfig',
     'users.apps.UsersConfig',
-    'djoser',
     'rest_framework',
     'rest_framework.authtoken',
+    'djoser',
     'django_filters',
 ]
 
@@ -52,9 +52,6 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.AllowAny', 
     ],
 
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-    ],
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
     ),
@@ -68,14 +65,21 @@ REST_FRAMEWORK = {
     'SEARCH_PARAM': 'name',
 }
 
-DJOSER = {
-    'SERIALIZERS': {
-        'user_create': 'api.serializers.UserSerializer',
-        'user': 'api.serializers.UserSerializer',
-        'set_username': 'api.serializers.UserSerializer',
-        'set_password_retype': 'api.serializers.UserSerializer',
-    },
-}
+#DJOSER = {
+#    'LOGIN_FIELD': 'email',
+#    'SEND_ACTIVATION_EMAIL': False,
+#    'HIDE_USERS': False,
+#    'SERIALIZERS': {
+#        'user_create': 'api.serializers.UserSerializer',
+#        'user': 'api.serializers.UserSerializer',
+#        'current_user':'api.serializers.UserSerializer',
+#        'set_password': 'djoser.serializers.SetPasswordSerializer',
+#    },
+#    'PERMISSIONS': {
+#        'user': ['djoser.permissions.CurrentUserOrAdminOrReadOnly'],
+#        'user_list': ['rest_framework.permissions.AllowAny']
+#    },
+#}
 
 #SIMPLE_JWT = {
 #   'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
