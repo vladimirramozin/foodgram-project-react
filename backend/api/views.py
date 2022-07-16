@@ -1,7 +1,7 @@
 import mimetypes
 import os
-
-from api.permissions import IsAuthorOrAdminOrReadOnly, AllowAny
+from rest_framework.permissions import AllowAny
+from api.permissions import IsAuthorOrAdminOrReadOnly
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework.backends import DjangoFilterBackend
