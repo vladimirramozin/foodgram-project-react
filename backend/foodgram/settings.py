@@ -49,7 +49,7 @@ INSTALLED_APPS = [
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.AllowAny', 
+        'rest_framework.permissions.IsAuthenticated', 
     ],
 
     'DEFAULT_AUTHENTICATION_CLASSES': [
@@ -58,11 +58,6 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
     ),
-     #'DEFAULT_PARSER_CLASSES': (
-     #   'rest_framework.parsers.FormParser',
-     #   'rest_framework.parsers.MultiPartParser'
-     #),
-
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 6,
     'SEARCH_PARAM': 'name',
@@ -73,15 +68,8 @@ DJOSER = {
         'user_create': 'api.serializers.UserSerializer',
         'user': 'api.serializers.UserSerializer',
         'set_username': 'api.serializers.UserSerializer',
-        'set_password_retype': 'api.serializers.UserSerializer',
     },
 }
-
-#SIMPLE_JWT = {
-#   'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
-#   'AUTH_HEADER_TYPES': ('Bearer',),
-#} 
-
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -117,9 +105,6 @@ WSGI_APPLICATION = 'foodgram.wsgi.application'
 
 AUTH_USER_MODEL = 'users.User' 
 
-# Database
-# https://docs.djangoproject.com/en/3.2/ref/settings/#databases
-
 DATABASES = {
     'default': {
         'ENGINE':'django.db.backends.postgresql',
@@ -130,9 +115,6 @@ DATABASES = {
         'PORT': os.getenv('DB_PORT', default='5432')
     }
 }
-
-# Password validation
-# https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -149,10 +131,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
-# Internationalization
-# https://docs.djangoproject.com/en/3.2/topics/i18n/
-
 LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
@@ -163,10 +141,6 @@ USE_L10N = True
 
 USE_TZ = True
 
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/3.2/howto/static-files/
-
 STATIC_URL = '/static/'
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
@@ -175,9 +149,4 @@ MEDIA_URL = '/media/'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-
-# Default primary key field type
-# https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
-
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
