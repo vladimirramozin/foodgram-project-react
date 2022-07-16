@@ -20,7 +20,7 @@ from .views import IngredientsViewSet, RecipeViewSet, TagViewSet, UserViewSet
 
 router = DefaultRouter()
 
-router.register(r'users', UserViewSet)
+router.register(r'users', UserViewSet, basename='users')
 router.register('recipes', RecipeViewSet)
 router.register('tags', TagViewSet)
 router.register('ingredients', IngredientsViewSet)
