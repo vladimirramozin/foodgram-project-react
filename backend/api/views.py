@@ -164,7 +164,6 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     @action(
         methods=['POST', ],
-        url_path='set_password',
         detail=False
     )
     def set_password(self, request):
@@ -179,7 +178,7 @@ class UserViewSet(viewsets.ModelViewSet):
 
         return Response(
             serializer.errors,
-            status=status.HTTP_400_BAD_REQUEST
+            status=HTTP_400_BAD_REQUEST
         )
 
     @action(detail=False, methods=['get'])
