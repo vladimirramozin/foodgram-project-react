@@ -12,6 +12,10 @@ class User(AbstractUser):
     #subscriptions = models.ManyToManyField('self', related_name='subscriptions',blank=True)
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
+    
+    class Meta:
+        ordering = ['-id']
+
 
 
 
