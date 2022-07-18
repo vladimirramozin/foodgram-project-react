@@ -178,26 +178,6 @@ class UserViewSet(viewsets.ModelViewSet):
             status=HTTP_400_BAD_REQUEST
         )
 
-    
-    @action(
-        methods=['POST', ],
-        detail=False
-    )
-    def set_password(self, request):
-        user = request.user
-        serializer = self.get_serializer(user, data=request.data)
-
-        if serializer.is_valid():
-            serializer.save()
-            return Response(
-                status=HTTP_204_NO_CONTENT
-            )
-
-        return Response(
-            serializer.errors,
-            status=HTTP_400_BAD_REQUEST
-        )
-
     @action(detail=False, methods=['get'])
     def me(self, request):
         serializer = self.get_serializer(request.user)
