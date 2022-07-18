@@ -7,7 +7,7 @@ from django.shortcuts import get_object_or_404
 from django_filters.rest_framework.backends import DjangoFilterBackend
 from recipe.models import (FavoriteRecipies, Ingredient, Recipe, ShoppingCart,
                            Subscriptions, Tag)
-from rest_framework import filters, permissions, viewsets
+from rest_framework import filters, permissions, mixins, viewsets
 from rest_framework.decorators import action
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import SAFE_METHODS, AllowAny, IsAuthenticated
