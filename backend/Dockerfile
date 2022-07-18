@@ -4,7 +4,7 @@ RUN mkdir /app
 
 WORKDIR /app
 
-COPY ./backend/requirements.txt ./
+COPY ../infra/requirements.txt ./
 
 #COPY ./requirements.txt ./
 
