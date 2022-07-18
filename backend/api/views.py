@@ -19,8 +19,8 @@ from .filters import RecipeFilter
 from .serializers import (IngredientGetSerializer, IngredientSerializer,
                           RecipeReadSerializer, RecipeWriteSerializer,
                           ShoppingCartSerializer, ShortRecipeSerializer,
-                          SubscriptionsSerializer, TagSerializer,
-                          UserSerializer)
+                          TagSerializer)
+from users.serializers import SubscriptionsSerializer, UserSerializer
 
 
 class CreateorListViewSet(mixins.CreateModelMixin, mixins.ListModelMixin,

@@ -1,6 +1,6 @@
-from api.serializers import ShortRecipeSerializer
 from recipe.models import Recipe, Subscriptions
 from rest_framework import serializers
+from drf_extra_fields.fields import Base64ImageField
 
 from .models import User
 
@@ -33,6 +33,15 @@ class UserSerializer(serializers.ModelSerializer):
             return False
         except TypeError:
             return False
+
+
+class ShortRecipeSerializer(serializers.ModelSerializer):
+    image = Base64ImageField()
+
+    class Meta:
+        model = Recipe
+        read_only_fields = ('author',)
+        fields = ('id', 'name', 'image', 'cooking_time')
 
 
 class SubscriptionsSerializer(serializers.ModelSerializer):
