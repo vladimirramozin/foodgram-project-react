@@ -93,6 +93,12 @@ class Recipe(models.Model):
         verbose_name_plural = 'Рецепты'
         default_related_name = 'recipe'
         ordering = ('-pub_date',)
+        constraints = [
+            models.UniqueConstraint(
+                fields=['name', 'text'],
+                name='unique_shopping_cart'
+            )
+        ]
 
 
 class Subscriptions(models.Model):
