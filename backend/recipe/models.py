@@ -42,8 +42,8 @@ class Ingredients(models.Model):
     )
 
     class Meta:
-        verbose_name = 'ингридиентЫ в рецепте'
-        verbose_name_plural = 'ингридиенты'
+        verbose_name = 'ингридиенты в рецепте'
+        verbose_name_plural = 'ингридиенты в рецепте'
         default_related_name = 'recipe'
 
     def __str__(self):
