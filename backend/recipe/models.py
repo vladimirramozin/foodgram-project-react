@@ -18,6 +18,9 @@ User = get_user_model()
 
 
 class Ingredient(models.Model):
+    """
+    модель ингредиенто для загрузки БД
+    """
     name = models.CharField(
         max_length=200, verbose_name='название ингридиента')
     measurement_unit = models.CharField(
@@ -33,6 +36,9 @@ class Ingredient(models.Model):
 
 
 class Ingredients(models.Model):
+    """
+    модель ингредиентов конретного рецепта
+    """
     ingredient = models.ForeignKey(Ingredient,
                                    on_delete=models.CASCADE,
                                    related_name='Ingredient')
@@ -51,6 +57,9 @@ class Ingredients(models.Model):
 
 
 class Tag(models.Model):
+    """
+    модель тегов(создаются администратором)
+    """
     pagination_class = None
     name = models.CharField(max_length=200, verbose_name='Название тега')
     slug = models.SlugField(unique=True)
@@ -66,6 +75,9 @@ class Tag(models.Model):
 
 
 class Recipe(models.Model):
+    """
+    модель рецепта
+    """
     pagination_class = None
     author = models.ForeignKey(
         User,
@@ -96,6 +108,9 @@ class Recipe(models.Model):
 
 
 class Subscriptions(models.Model):
+    """
+    модель подписки на автора
+    """
     user = models.ForeignKey(User,
                              blank=True,
                              null=True,
@@ -121,6 +136,9 @@ class Subscriptions(models.Model):
 
 
 class FavoriteRecipies(models.Model):
+    """
+    модель избранных рецептов
+    """
     user = models.ForeignKey(
         User,
         blank=True,
@@ -148,6 +166,9 @@ class FavoriteRecipies(models.Model):
 
 
 class ShoppingCart(models.Model):
+    """
+    модель списка покупок
+    """
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,

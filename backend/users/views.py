@@ -13,6 +13,9 @@ from .serializers import SubscriptionsSerializer, UserSerializer
 
 
 class UserViewSet(viewsets.ModelViewSet):
+    """
+    метод создания, удаления, обновления, смены пароля пользователя
+    """    
     queryset = User.objects.all()
     serializer_class = UserSerializer
     http_method_names = ('get', 'post', 'put', 'patch', 'delete',)
