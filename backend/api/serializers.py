@@ -61,17 +61,22 @@ class RecipeReadSerializer(serializers.ModelSerializer):
                   'name', 'image', 'text', 'cooking_time')
 
     def get_is_in_shopping_cart(self, obj):
-        if ShoppingCart.objects.filter(user=self.context['request'].user,
-                                       in_shopping_cart=obj.id).exists():
-            return True
-        return False
+        try:
+            if ShoppingCart.objects.filter(user=self.context['request'].user,
+                                           in_shopping_cart=obj.id).exists():
+                return True
+            return False
+        except TypeError:
+            return False
 
     def get_is_favorited(self, obj):
-
-        if FavoriteRecipies.objects.filter(user=self.context['request'].user,
+        try:
+            if FavoriteRecipies.objects.filter(user=self.context['request'].user,
                                            favorite=obj.id).exists():
-            return True
-        return False
+                return True
+            return False
+        except TypeError:
+            return False
 
 
 class RecipeWriteSerializer(serializers.ModelSerializer):
