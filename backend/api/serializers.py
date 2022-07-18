@@ -65,10 +65,13 @@ class UserSerializer(serializers.ModelSerializer):
         return user
 
     def get_is_subscribed(self, obj):
-        if Subscriptions.objects.filter(user=self.context['request'].user,
+        try:
+            if Subscriptions.objects.filter(user=self.context['request'].user,
                                         following=obj.id).exists():
-            return True
-        return False
+                return True
+            return False
+        except TypeError:
+            return False  
 
 
 class RecipeReadSerializer(serializers.ModelSerializer):
