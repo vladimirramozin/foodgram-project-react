@@ -40,7 +40,7 @@ jobs:
         with:
           push: true
           file: ./backend/Dockerfile
-          tags: vladimirramozin/foodgram_back:37
+          tags: vladimirramozin/foodgram_back:38
   deploy:
     runs-on: ubuntu-latest
     needs: build_and_push_to_docker_hub
