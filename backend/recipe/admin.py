@@ -11,7 +11,7 @@ admin.site.register(Tag)
 admin.site.register(FavoriteRecipies)
 admin.site.register(ShoppingCart)
 
-@register(Ingredient)
+@register(Ingredients)
 class IngredientAdmin(ModelAdmin):
     list_display = ('id', 'name', 'measurement_unit',)
     search_fields = ('name', )
