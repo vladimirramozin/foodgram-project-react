@@ -16,46 +16,46 @@ class CreateorListViewSet(mixins.CreateModelMixin, mixins.ListModelMixin,
                           viewsets.GenericViewSet):
     pass
 
-
-class UserViewSet(viewsets.ModelViewSet):
+  class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
-    serializer_class = UserSerializer
-    #pagination_class=PageNumberPagination
-    #@action(detail=True, methods=['get'])
-    #def me(self, request):
-    #    serializer = self.get_serializer(request.user)
-    #    return Response(serializer.data, status=status.HTTP_200_OK)
+    serializer_class = UserSerializer    
+    @action(
+        methods=['POST', ],
+        detail=False
+    )
+    def set_password(self, request):
+        user = request.user
+        if user.check_password(request.data['current_password']):
+            user.set_password(request.data['new_password'])
+            user.save()
+            return Response(
+                status=HTTP_204_NO_CONTENT
+            )
+        return Response(
+            status=HTTP_400_BAD_REQUEST
+        )
+
+    @action(detail=False, methods=['get'])
+    def me(self, request):
+        serializer = self.get_serializer(request.user)
+        return Response(serializer.data, status=HTTP_200_OK)
+
     @action(
         methods=('get',),
         detail=False,
         permission_classes=(IsAuthenticated,),
     )
     def subscriptions(self, request):
-        #pagination_class=PageNumberPagination
-        user=request.user
-        subscriptions=Subscriptions.objects.filter(user=user).values_list('following_id', flat=True)
+        paginator = PageNumberPagination()
+        paginator.page_size_query_param = 'limit'
+        user = request.user
+        subscriptions = Subscriptions.objects.filter(
+            user=user).values_list('following_id', flat=True)
         subscriptions_users=User.objects.filter(id__in=subscriptions)
-        serializer = SubscriptionsSerializer(subscriptions_users, many=True, context={'request': request})
-        return Response(
-                serializer.data,
-                status=HTTP_200_OK,
-            )
-
-    @action(
-        methods=('post', 'delete',),
-        detail=True,
-        permission_classes=(IsAuthenticated,),
-    )    
-    def subscribe(self, request, pk=None):
-        following = get_object_or_404(User, pk=pk)
-        if request.method == 'POST':
-            Subscriptions.objects.create(user=request.user, following=following)
-            serializer = SubscriptionsSerializer(following)
-            return Response(
-                serializer.data,
-                status=HTTP_201_CREATED,
-            )
-        Subscriptions.objects.filter(user=request.user, following=following).delete()
-        return Response(status=HTTP_204_NO_CONTENT)
-
+        authors = paginator.paginate_queryset(
+            subscriptions_users, request=request) 
+        serializer = SubscriptionsSerializer(authors, many=True)
+        return paginator.get_paginated_response(
+            serializer.data
+        )
 
