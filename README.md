@@ -101,13 +101,15 @@ source .venv/bin/activate
 python3 -m pip install --upgrade pip
 pip install -r requirements.txt
 ```
-Выполнить миграции:
-```
-python3 manage.py migrate
-```
+
 Перейти в папку infra собрать и запустить докер образ:
 ```
 sudo docker-compose up -d --build
+```
+
+Выполнить миграции и собрать статику:
+```
+python3 manage.py migrate
 ```
 
 
