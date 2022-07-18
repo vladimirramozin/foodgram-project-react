@@ -1,16 +1,16 @@
 import mimetypes
 import os
-from rest_framework.permissions import AllowAny
+
 from api.permissions import IsAuthorOrAdminOrReadOnly
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework.backends import DjangoFilterBackend
-from recipe.models import (FavoriteRecipies, Ingredient, Ingredients, Recipe,
-                           ShoppingCart, Subscriptions, Tag)
-from rest_framework import filters, mixins, permissions, viewsets
+from recipe.models import (FavoriteRecipies, Ingredient, Recipe, ShoppingCart,
+                           Subscriptions, Tag)
+from rest_framework import filters, permissions, viewsets
 from rest_framework.decorators import action
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.permissions import SAFE_METHODS, IsAuthenticated
+from rest_framework.permissions import SAFE_METHODS, AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.status import (HTTP_200_OK, HTTP_201_CREATED,
                                    HTTP_204_NO_CONTENT, HTTP_400_BAD_REQUEST)
@@ -28,7 +28,6 @@ class CreateorListViewSet(mixins.CreateModelMixin, mixins.ListModelMixin,
                           viewsets.GenericViewSet):
     pass
 
-
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     filter_backends = (DjangoFilterBackend,)
@@ -42,7 +41,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
-   
+
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -118,15 +117,28 @@ class RecipeViewSet(viewsets.ModelViewSet):
         shopping_cart = ShoppingCart.objects.filter(user=request.user)
         ingredients = {}
         for recipe in shopping_cart:
-            for i in range(0, len(recipe.in_shopping_cart.ingredients.values_list('ingredient'))): 
-                product = recipe.in_shopping_cart.ingredients.values('ingredient')[i]
-                measurement_unit=Ingredient.objects.filter(id=product['ingredient'])[0].measurement_unit
+            products = recipe.in_shopping_cart.ingredients.values('ingredient')
+            right_board = len(products)
+            for i in range(0, right_board):
+                product = products[i]
+                measurement_unit = Ingredient.objects.filter(
+                    id=product['ingredient'])[0].measurement_unit
                 try:
-                    if ingredients[Ingredient.objects.filter(id=product['ingredient'])[0].name]:
-                        ingredients[Ingredient.objects.filter(id=product['ingredient'])[0].name]=ingredients[Ingredient.objects.filter(id=product['ingredient'])[0].name][0]+recipe.in_shopping_cart.ingredients.values_list('amount')[i][0], measurement_unit
-                except:
-                    ingredients[Ingredient.objects.filter(id=product['ingredient'])[0].name] = recipe.in_shopping_cart.ingredients.values_list('amount')[i][0], measurement_unit
-        result_cart = '\r\n'.join('{} {} {}'.format(key, val[0], val[1]) for key, val in ingredients.items())
+                    if ingredients[Ingredient.objects.filter(
+                        id=product['ingredient'])[0].name]:
+                        ingredient = ingredients[Ingredient.objects.filter(
+                            id=product['ingredient'])[0].name]
+                        ingredient = (ingredient+
+                            recipe.in_shopping_cart.ingredients.values_list(
+                                'amount')[i][0], measurement_unit)
+                except KeyError:
+                    name_ingredient = Ingredient.objects.filter(
+                        id=product['ingredient'])[0].name
+                    ingredients[name_ingredient] = (recipe.in_shopping_cart.
+                        ingredients.values_list('amount')[i][0],
+                        measurement_unit)
+        result_cart = '\r\n'.join('{} {} {}'.format(
+            key, val[0], val[1]) for key, val in ingredients.items())
         file = open('ShoppingCart.txt', 'w')
         file.write(result_cart)
         file.close()
@@ -135,7 +147,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         file_type = mimetypes.guess_type('ShoppingCart.txt')
         response['Content-Type'] = file_type
         response['Content-Length'] = str(os.stat('ShoppingCart.txt').st_size)
-        response['Content-Disposition'] = 'attachment; filename=ShoppingCart.txt'
+        response['Content-Disposition'] = 'attachment; filename=ShoppCart.txt'
         return response
 
 
@@ -161,7 +173,8 @@ class IngredientsViewSet(viewsets.ReadOnlyModelViewSet):
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
-    serializer_class = UserSerializer    
+    serializer_class = UserSerializer
+
     @action(
         methods=['POST', ],
         detail=False
@@ -194,9 +207,9 @@ class UserViewSet(viewsets.ModelViewSet):
         user = request.user
         subscriptions = Subscriptions.objects.filter(
             user=user).values_list('following_id', flat=True)
-        subscriptions_users=User.objects.filter(id__in=subscriptions)
+        subscriptions_users = User.objects.filter(id__in=subscriptions)
         authors = paginator.paginate_queryset(
-            subscriptions_users, request=request) 
+            subscriptions_users, request=request)
         serializer = SubscriptionsSerializer(authors, many=True)
         return paginator.get_paginated_response(
             serializer.data
@@ -210,13 +223,15 @@ class UserViewSet(viewsets.ModelViewSet):
     def subscribe(self, request, pk=None):
         following = get_object_or_404(User, pk=pk)
         if request.method == 'POST':
-            Subscriptions.objects.create(user=request.user, following=following)
+            Subscriptions.objects.create(
+                user=request.user, following=following)
             serializer = SubscriptionsSerializer(following)
             return Response(
                 serializer.data,
                 status=HTTP_201_CREATED,
             )
-        Subscriptions.objects.filter(user=request.user, following=following).delete()
+        Subscriptions.objects.filter(
+            user=request.user, following=following).delete()
         return Response(status=HTTP_204_NO_CONTENT)
 
 
