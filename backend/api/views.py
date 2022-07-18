@@ -14,13 +14,13 @@ from rest_framework.response import Response
 from rest_framework.status import (HTTP_200_OK, HTTP_201_CREATED,
                                    HTTP_204_NO_CONTENT)
 from users.models import User
+from users.serializers import SubscriptionsSerializer, UserSerializer
 
 from .filters import RecipeFilter
 from .serializers import (IngredientGetSerializer, IngredientSerializer,
                           RecipeReadSerializer, RecipeWriteSerializer,
                           ShoppingCartSerializer, ShortRecipeSerializer,
                           TagSerializer)
-from users.serializers import SubscriptionsSerializer, UserSerializer
 
 
 class CreateorListViewSet(mixins.CreateModelMixin, mixins.ListModelMixin,
@@ -29,20 +29,33 @@ class CreateorListViewSet(mixins.CreateModelMixin, mixins.ListModelMixin,
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
+    """
+    метод добавляет, удаляет, отображает список рецептов
+    """
     queryset = Recipe.objects.all()
     filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipeFilter
     permission_classes = (IsAuthorOrAdminOrReadOnly,)
 
     def get_serializer_class(self):
+        """
+        реализованы два класса сериализаторов на чтение и на запись
+        """
         if self.request.method in SAFE_METHODS:
             return RecipeReadSerializer
         return RecipeWriteSerializer
 
     def perform_create(self, serializer):
+        """
+        метод сохраняет рецепт
+        """
         serializer.save(author=self.request.user)
 
     def create(self, request, *args, **kwargs):
+        """
+        метод создает рецепт из набора данных переданных 
+        пользователем и передает для сохранения методу perfom_create
+        """
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
@@ -56,6 +69,9 @@ class RecipeViewSet(viewsets.ModelViewSet):
         )
 
     def update(self, request, *args, **kwargs):
+        """
+        метод обновляет рецепт
+        """
         partial = kwargs.pop('partial', True)
         instance = self.get_object()
         serializer = self.get_serializer(
@@ -77,6 +93,9 @@ class RecipeViewSet(viewsets.ModelViewSet):
         permission_classes=(IsAuthenticated,),
     )
     def favorite(self, request, pk=None):
+        """
+        метод добавления в избранные
+        """
         recipe = get_object_or_404(Recipe, pk=pk)
         if request.method == 'POST':
             FavoriteRecipies.objects.create(user=request.user, favorite=recipe)
@@ -95,6 +114,9 @@ class RecipeViewSet(viewsets.ModelViewSet):
         permission_classes=(IsAuthenticated,),
     )
     def shopping_cart(self, request, pk=None):
+        """
+        метод добавляет в список покупок
+        """
         recipe = get_object_or_404(Recipe, pk=pk)
         if request.method == 'POST':
             ShoppingCart.objects.create(
@@ -114,6 +136,9 @@ class RecipeViewSet(viewsets.ModelViewSet):
         permission_classes=(IsAuthenticated,),
     )
     def download_shopping_cart(self, request):
+        """
+        метод выгрузки списка покупков
+        """
         shopping_cart = ShoppingCart.objects.filter(user=request.user)
         ingredients = {}
         for recipe in shopping_cart:
@@ -156,16 +181,23 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    метод создания, удаления тегов
+    """
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
     pagination_class = None
-    permission_class = AllowAny
+    permission_classes = (IsAuthorOrAdminOrReadOnly,)
 
 
 class IngredientsViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    метод создания, удаления ингредиентов
+    """
     queryset = Ingredient.objects.all()
     serializer_class = IngredientGetSerializer
     pagination_class = None
+    permission_classes = (IsAuthorOrAdminOrReadOnly,)
     filter_backends = (filters.SearchFilter,)
     search_fields = ('^name',)
 
@@ -173,12 +205,3 @@ class IngredientsViewSet(viewsets.ReadOnlyModelViewSet):
         if self.action == 'list' or self.action == 'retrieve':
             return IngredientGetSerializer
         return IngredientSerializer
-
-
-class ShoppingCartViewSet(CreateorListViewSet):
-    serializer_class = ShoppingCartSerializer
-
-    def perform_create(self, serializer):
-        shopping_cart = get_object_or_404(Recipe, id=self.kwargs['recipes_id'])
-        serializer.save(user=self.request.user,
-                        in_shopping_cart=shopping_cart)
