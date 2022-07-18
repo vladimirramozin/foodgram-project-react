@@ -6,7 +6,6 @@ from .models import (FavoriteRecipies, Ingredient, Ingredients, Recipe,
                      ShoppingCart, Subscriptions, Tag)
 
 admin.site.register(Subscriptions)
-admin.site.register(Ingredients)
 admin.site.register(Tag)
 admin.site.register(FavoriteRecipies)
 admin.site.register(ShoppingCart)
