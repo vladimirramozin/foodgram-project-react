@@ -75,7 +75,7 @@ class Recipe(models.Model):
         verbose_name='автор'
     )
     name = models.CharField(max_length=200, verbose_name='Назавание рецепта')
-    text = models.TextField(verbose_name='Описание рецепта')
+    text = models.TextField(verbose_name='Описание рецепта', unique=True)
     image = models.ImageField(upload_to='static')
     ingredients = models.ManyToManyField(Ingredients, blank=True)
     tags = models.ManyToManyField(Tag, blank=True)
@@ -93,12 +93,6 @@ class Recipe(models.Model):
         verbose_name_plural = 'Рецепты'
         default_related_name = 'recipe'
         ordering = ('-pub_date',)
-        constraints = [
-            models.UniqueConstraint(
-                fields=['name', 'text'],
-                name='unique_shopping_cart'
-            )
-        ]
 
 
 class Subscriptions(models.Model):
