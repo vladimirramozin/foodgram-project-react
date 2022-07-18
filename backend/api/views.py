@@ -161,7 +161,24 @@ class IngredientsViewSet(viewsets.ReadOnlyModelViewSet):
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
-    serializer_class = UserSerializer
+    serializer_class = UserSerializer    
+    @action(
+        methods=['POST', ],
+        detail=False
+    )
+    def set_password(self, request):
+        user = request.user
+        if user.check_password(request.data['current_password']):
+            user.set_password(request.data['new_password'])
+            user.save()
+            return Response(
+                status=HTTP_204_NO_CONTENT
+            )
+        return Response(
+            status=HTTP_400_BAD_REQUEST
+        )
+
+    
     @action(
         methods=['POST', ],
         detail=False
