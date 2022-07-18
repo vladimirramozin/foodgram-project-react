@@ -13,10 +13,11 @@ admin.site.register(ShoppingCart)
 
 @register(Recipe)
 class RecipeAdmin(ModelAdmin):
-    list_display = ('id', 'name', 'author', 'tags',)
+    list_display = ('id', 'name', 'author', 'tags', 'added_in_favorites',)
     search_fields = ('name', 'author',)
     readonly_fields = ('added_in_favorites',)
 
     @display
     def added_in_favorites(self, obj):
-        return obj.favorite.count()
+        return obj.favorite_recipe.values_list('favorite').count()
+
