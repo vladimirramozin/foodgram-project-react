@@ -7,7 +7,7 @@ from django.shortcuts import get_object_or_404
 from django_filters.rest_framework.backends import DjangoFilterBackend
 from recipe.models import (FavoriteRecipies, Ingredient, Recipe, ShoppingCart,
                            Subscriptions, Tag)
-from rest_framework import filters, permissions, viewsets
+from rest_framework import filters, mixins, permissions, viewsets
 from rest_framework.decorators import action
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import SAFE_METHODS, AllowAny, IsAuthenticated
@@ -27,6 +27,7 @@ from .serializers import (IngredientGetSerializer, IngredientSerializer,
 class CreateorListViewSet(mixins.CreateModelMixin, mixins.ListModelMixin,
                           viewsets.GenericViewSet):
     pass
+
 
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
@@ -125,18 +126,22 @@ class RecipeViewSet(viewsets.ModelViewSet):
                     id=product['ingredient'])[0].measurement_unit
                 try:
                     if ingredients[Ingredient.objects.filter(
-                        id=product['ingredient'])[0].name]:
+                            id=product['ingredient'])[0].name]:
                         ingredient = ingredients[Ingredient.objects.filter(
                             id=product['ingredient'])[0].name]
-                        ingredient = (ingredient+
+                        ingredient = (
+                            ingredient +
                             recipe.in_shopping_cart.ingredients.values_list(
-                                'amount')[i][0], measurement_unit)
+                                'amount')[i][0], measurement_unit
+                        )
                 except KeyError:
                     name_ingredient = Ingredient.objects.filter(
                         id=product['ingredient'])[0].name
-                    ingredients[name_ingredient] = (recipe.in_shopping_cart.
+                    ingredients[name_ingredient] = (
+                        recipe.in_shopping_cart.
                         ingredients.values_list('amount')[i][0],
-                        measurement_unit)
+                        measurement_unit
+                    )
         result_cart = '\r\n'.join('{} {} {}'.format(
             key, val[0], val[1]) for key, val in ingredients.items())
         file = open('ShoppingCart.txt', 'w')
