@@ -12,9 +12,9 @@ admin.site.register(ShoppingCart)
 
 @register(Ingredients)
 class IngredientAdmin(ModelAdmin):
-    list_display = ('id', 'name', 'measurement_unit',)
-    search_fields = ('name', )
-    list_filter = ('name', )
+    list_display = ('id', 'ingredient', 'amount',)
+    search_fields = ('ingredient', )
+    list_filter = ('ingredient', )
 
 
 @register(Recipe)
@@ -22,8 +22,9 @@ class RecipeAdmin(ModelAdmin):
     list_display = ('id', 'name', 'author', 'tags', 'added_in_favorites',)
     search_fields = ('name', 'author',)
     readonly_fields = ('added_in_favorites',)
-    list_filter = ('name', 'author', 'tags',)
-
+    list_filter = ('name', 'author', 'tags__slug',)
+    def tags(self, obj):
+        return obj.tags.slug
     @display
     def added_in_favorites(self, obj):
         return obj.favorite_recipe.values_list('favorite').count()
