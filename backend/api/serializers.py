@@ -4,8 +4,6 @@ from recipe.models import (FavoriteRecipies, Ingredient, Ingredients, Recipe,
                            ShoppingCart, Tag)
 from rest_framework import serializers
 from rest_framework.relations import SlugRelatedField
-from rest_framework.validators import UniqueTogetherValidator
-from users.models import User
 from users.serializers import UserSerializer
 
 
@@ -71,8 +69,9 @@ class RecipeReadSerializer(serializers.ModelSerializer):
 
     def get_is_favorited(self, obj):
         try:
-            if FavoriteRecipies.objects.filter(user=self.context['request'].user,
-                                           favorite=obj.id).exists():
+            if FavoriteRecipies.objects.filter(
+                    user=self.context['request'].user,
+                    favorite=obj.id).exists():
                 return True
             return False
         except TypeError:
@@ -104,7 +103,7 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
             ing = Ingredients.objects.get_or_create(
                     ingredient=get_object_or_404(
                         Ingredient, id=ingredient['id']),
-                        amount=ingredient['amount'],
+                    amount=ingredient['amount'],
                     )
             recipe.ingredients.add(ing[0])
         for tag in tags:

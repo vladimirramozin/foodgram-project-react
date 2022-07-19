@@ -1,14 +1,14 @@
 from django.contrib import admin
 from django.contrib.admin import ModelAdmin, display, register
-from django.dispatch import receiver
 
-from .models import (FavoriteRecipies, Ingredient, Ingredients, Recipe,
-                     ShoppingCart, Subscriptions, Tag)
+from .models import (FavoriteRecipies, Ingredients, Recipe, ShoppingCart,
+                     Subscriptions, Tag)
 
 admin.site.register(Subscriptions)
 admin.site.register(Tag)
 admin.site.register(FavoriteRecipies)
 admin.site.register(ShoppingCart)
+
 
 @register(Ingredients)
 class IngredientAdmin(ModelAdmin):
@@ -23,9 +23,10 @@ class RecipeAdmin(ModelAdmin):
     search_fields = ('name', 'author',)
     readonly_fields = ('added_in_favorites',)
     list_filter = ('name', 'author', 'tags__slug',)
+
     def tags(self, obj):
         return obj.tags.slug
+
     @display
     def added_in_favorites(self, obj):
         return obj.favorite_recipe.values_list('favorite').count()
-

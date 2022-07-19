@@ -1,6 +1,6 @@
+from drf_extra_fields.fields import Base64ImageField
 from recipe.models import Recipe, Subscriptions
 from rest_framework import serializers
-from drf_extra_fields.fields import Base64ImageField
 
 from .models import User
 
@@ -28,7 +28,7 @@ class UserSerializer(serializers.ModelSerializer):
     def get_is_subscribed(self, obj):
         try:
             if Subscriptions.objects.filter(user=self.context['request'].user,
-                                        following=obj.id).exists():
+                                            following=obj.id).exists():
                 return True
             return False
         except TypeError:

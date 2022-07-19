@@ -7,14 +7,12 @@ from django.shortcuts import get_object_or_404
 from django_filters.rest_framework.backends import DjangoFilterBackend
 from recipe.models import (FavoriteRecipies, Ingredient, Recipe, ShoppingCart,
                            Tag)
-from rest_framework import filters, mixins, permissions, viewsets
+from rest_framework import filters, mixins, viewsets
 from rest_framework.decorators import action
-from rest_framework.permissions import SAFE_METHODS, AllowAny, IsAuthenticated
+from rest_framework.permissions import SAFE_METHODS, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.status import (HTTP_200_OK, HTTP_201_CREATED,
                                    HTTP_204_NO_CONTENT)
-from users.models import User
-from users.serializers import SubscriptionsSerializer, UserSerializer
 
 from .filters import RecipeFilter
 from .serializers import (IngredientGetSerializer, IngredientSerializer,
@@ -54,7 +52,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         """
-        метод создает рецепт из набора данных переданных 
+        метод создает рецепт из набора данных переданных
         пользователем и передает для сохранения методу perfom_create
         """
         serializer = self.get_serializer(data=request.data)
@@ -203,6 +201,7 @@ class IngredientsViewSet(viewsets.ReadOnlyModelViewSet):
     filter_backends = (filters.SearchFilter,)
     search_fields = ('^name',)
     http_method_names = ('post', 'delete',)
+
     def get_serializer_class(self):
         if self.action == 'list' or self.action == 'retrieve':
             return IngredientGetSerializer

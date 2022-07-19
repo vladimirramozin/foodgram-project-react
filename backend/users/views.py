@@ -1,6 +1,6 @@
 from django.shortcuts import get_object_or_404
 from recipe.models import Subscriptions
-from rest_framework import permissions, viewsets
+from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
@@ -15,11 +15,10 @@ from .serializers import SubscriptionsSerializer, UserSerializer
 class UserViewSet(viewsets.ModelViewSet):
     """
     метод создания, удаления, обновления, смены пароля пользователя
-    """    
+    """
     queryset = User.objects.all()
     serializer_class = UserSerializer
     http_method_names = ('get', 'post', 'put', 'patch', 'delete',)
-
 
     @action(
         methods=['POST', ],
@@ -79,5 +78,3 @@ class UserViewSet(viewsets.ModelViewSet):
         Subscriptions.objects.filter(
             user=request.user, following=following).delete()
         return Response(status=HTTP_204_NO_CONTENT)
-
-
