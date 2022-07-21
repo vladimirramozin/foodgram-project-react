@@ -134,39 +134,16 @@ class RecipeViewSet(viewsets.ModelViewSet):
     )
     def download_shopping_cart(self, request):
         """
-        метод выгрузки списка покупков
+        метод выгрузки списка покуп   
         """
-
-
-        shopping_cart = ShoppingCart.objects.filter(user=request.user)
-        ingredients = {}
-        for recipe in shopping_cart:
-            products = recipe.in_shopping_cart.ingredients.values('ingredient')
-            right_board = len(products)
-            for i in range(0, right_board):
-                product = products[i]
-                measurement_unit = Ingredient.objects.filter(
-                    id=product['ingredient'])[0].measurement_unit
-                try:
-                    if ingredients[Ingredient.objects.filter(
-                            id=product['ingredient'])[0].name]:
-                        ingredient = ingredients[Ingredient.objects.filter(
-                            id=product['ingredient'])[0].name]
-                        ingredient = (
-                            ingredient +
-                            recipe.in_shopping_cart.ingredients.values_list(
-                                'amount')[i][0], measurement_unit
-                        )
-                except KeyError:
-                    name_ingredient = Ingredient.objects.filter(
-                        id=product['ingredient'])[0].name
-                    ingredients[name_ingredient] = (
-                        recipe.in_shopping_cart.
-                        ingredients.values_list('amount')[i][0],
-                        measurement_unit
-                    )
-        result_cart = '\r\n'.join('{} {} {}'.format(
-            key, val[0], val[1]) for key, val in ingredients.items())
+        NAME='in_shopping_cart__ingredients__ingredient__name'
+        MESUREMENT_UNIT='in_shopping_cart__ingredients__ingredient__measurement_unit'
+        AMOUNT='in_shopping_cart__ingredients__amount'
+        n=ShoppingCart.objects.filter(user=request.user).values(NAME, MESUREMENT_UNIT).annotate(amount=Sum(AMOUNT)) 
+        result_cart = ''
+        for i in n:
+             result_cart += ''.join('{} {} {}'.format(i[NAME], i['amount'], i[MESUREMENT_UNIT]))
+             result_cart += '\r\n'
         file = open('ShoppingCart.txt', 'w')
         file.write(result_cart)
         file.close()
