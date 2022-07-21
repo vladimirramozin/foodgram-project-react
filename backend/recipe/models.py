@@ -5,8 +5,9 @@ from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from rest_framework import serializers
-from rest_framework.authtoken.models import Token
 
+from rest_framework.authtoken.models import Token
+from django.db.models import UniqueConstraint
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
 def create_auth_token(sender, instance=None, created=False, **kwargs):
@@ -30,6 +31,9 @@ class Ingredient(models.Model):
         verbose_name = 'ингридиент'
         verbose_name_plural = 'ингридиенты'
         default_related_name = 'recipe'
+        constraints = [
+            models.UniqueConstraint(fields=['name', 'measurement_unit'], name='unique_ingredient')
+        ]
 
     def __str__(self):
         return self.name
@@ -60,7 +64,6 @@ class Tag(models.Model):
     """
     модель тегов(создаются администратором)
     """
-    pagination_class = None
     name = models.CharField(max_length=200, verbose_name='Название тега')
     slug = models.SlugField(unique=True)
     color = models.CharField(max_length=7, default='#ffffff')
@@ -78,10 +81,8 @@ class Recipe(models.Model):
     """
     модель рецепта
     """
-    pagination_class = None
     author = models.ForeignKey(
         User,
-        null=True,
         on_delete=models.CASCADE,
         related_name='recipe',
         verbose_name='автор'
@@ -89,7 +90,7 @@ class Recipe(models.Model):
     name = models.CharField(max_length=200, verbose_name='Назавание рецепта')
     text = models.TextField(verbose_name='Описание рецепта', unique=True)
     image = models.ImageField(upload_to='static')
-    ingredients = models.ManyToManyField(Ingredients, blank=True)
+    ingredients = models.ManyToManyField(Ingredients, blank=True, related_name = 'ingredients')
     tags = models.ManyToManyField(Tag, blank=True)
     cooking_time = models.PositiveIntegerField(
         validators=[MinValueValidator(1, 'out of range')],
@@ -112,13 +113,9 @@ class Subscriptions(models.Model):
     модель подписки на автора
     """
     user = models.ForeignKey(User,
-                             blank=True,
-                             null=True,
                              on_delete=models.CASCADE,
                              related_name='follower')
     following = models.ForeignKey(User,
-                                  blank=True,
-                                  null=True,
                                   on_delete=models.CASCADE,
                                   related_name='following')
 
@@ -141,15 +138,11 @@ class FavoriteRecipies(models.Model):
     """
     user = models.ForeignKey(
         User,
-        blank=True,
-        null=True,
         on_delete=models.CASCADE,
         related_name='favorite'
     )
     favorite = models.ForeignKey(
         Recipe,
-        blank=True,
-        null=True,
         on_delete=models.CASCADE,
         related_name='favorite_recipe'
     )

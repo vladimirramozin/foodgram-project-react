@@ -1,13 +1,13 @@
 import mimetypes
 import os
-
+import pdb
 from api.permissions import IsAuthorOrAdminOrReadOnly
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework.backends import DjangoFilterBackend
 from recipe.models import (FavoriteRecipies, Ingredient, Recipe, ShoppingCart,
                            Tag)
-from rest_framework import filters, mixins, viewsets
+from rest_framework import filters, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import SAFE_METHODS, IsAuthenticated
 from rest_framework.response import Response
@@ -21,9 +21,7 @@ from .serializers import (IngredientGetSerializer, IngredientSerializer,
                           TagSerializer)
 
 
-class CreateorListViewSet(mixins.CreateModelMixin, mixins.ListModelMixin,
-                          viewsets.GenericViewSet):
-    pass
+from .mixins import CreateorListViewSet
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
@@ -138,6 +136,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
         """
         метод выгрузки списка покупков
         """
+
+
         shopping_cart = ShoppingCart.objects.filter(user=request.user)
         ingredients = {}
         for recipe in shopping_cart:
