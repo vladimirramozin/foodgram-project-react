@@ -9,11 +9,6 @@ from rest_framework import serializers
 from rest_framework.authtoken.models import Token
 from django.db.models import UniqueConstraint
 
-@receiver(post_save, sender=settings.AUTH_USER_MODEL)
-def create_auth_token(sender, instance=None, created=False, **kwargs):
-    if created:
-        Token.objects.create(user=instance)
-
 
 User = get_user_model()
 
@@ -47,7 +42,7 @@ class Ingredients(models.Model):
                                    on_delete=models.CASCADE,
                                    related_name='Ingredient')
     amount = models.PositiveIntegerField(
-        validators=[MinValueValidator(1, 'out of range')],
+        validators=[MinValueValidator(1, 'задавать значение меньше единицы запрещено')],
         verbose_name='количество в целых числах'
     )
 
@@ -93,7 +88,7 @@ class Recipe(models.Model):
     ingredients = models.ManyToManyField(Ingredients, blank=True, related_name = 'ingredients')
     tags = models.ManyToManyField(Tag, blank=True)
     cooking_time = models.PositiveIntegerField(
-        validators=[MinValueValidator(1, 'out of range')],
+        validators=[MinValueValidator(1, 'задавать значение меньше единицы запрещено')],
         verbose_name='время приготовления в минутах'
     )
     pub_date = models.DateTimeField(auto_now_add=True, verbose_name='дата')
