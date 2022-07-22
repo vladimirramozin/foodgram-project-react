@@ -33,8 +33,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipeFilter
     permission_classes = (IsAuthorOrAdminOrReadOnly,)
-    http_method_names = ('get', 'post', 'put', 'patch', 'delete',)
-
+    
     def get_serializer_class(self):
         """
         реализованы два класса сериализаторов на чтение и на запись
@@ -156,7 +155,6 @@ class TagViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = TagSerializer
     pagination_class = None
     permission_classes = (IsAuthorOrAdminOrReadOnly,)
-    http_method_names = ('get', )
 
 
 class IngredientsViewSet(viewsets.ReadOnlyModelViewSet):
@@ -169,7 +167,6 @@ class IngredientsViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = (IsAuthorOrAdminOrReadOnly,)
     filter_backends = (filters.SearchFilter,)
     search_fields = ('^name',)
-    http_method_names = ('post', 'delete',)
 
     def get_serializer_class(self):
         if self.action == 'list' or self.action == 'retrieve':
