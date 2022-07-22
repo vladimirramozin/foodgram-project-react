@@ -118,13 +118,16 @@ class Subscriptions(models.Model):
         verbose_name = 'Подписка'
         verbose_name_plural = 'Подписки'
 
-    def validate_following(self, following):
-        if self.context.get('request').method != 'POST':
-            return following
-        if self.context.get('request').user == following:
-            message = 'Вы подписываетесь на самого себя'
-            raise serializers.ValidationError(message)
-        return following
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'following'],
+                name='unique_following'
+            ),
+            models.CheckConstraint(
+                check=~models.Q(user=models.F('following')),
+                name='check_following'
+            ),
+        ]
 
 
 class FavoriteRecipies(models.Model):
