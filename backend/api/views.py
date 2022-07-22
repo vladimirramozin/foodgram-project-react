@@ -135,7 +135,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     )
     def download_shopping_cart(self, request):
         """
-        метод выгрузки списка покуп   
+        метод выгрузки списка покуп
         """
         NAME='in_shopping_cart__ingredients__ingredient__name'
         MESUREMENT_UNIT='in_shopping_cart__ingredients__ingredient__measurement_unit'
@@ -145,16 +145,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         for i in n:
              result_cart += ''.join('{} {} {}'.format(i[NAME], i['amount'], i[MESUREMENT_UNIT]))
              result_cart += '\r\n'
-        file = open('ShoppingCart.txt', 'w')
-        file.write(result_cart)
-        file.close()
-        file = open('ShoppingCart.txt', 'rb')
-        response = HttpResponse(file.read())
-        file_type = mimetypes.guess_type('ShoppingCart.txt')
-        response['Content-Type'] = file_type
-        response['Content-Length'] = str(os.stat('ShoppingCart.txt').st_size)
-        response['Content-Disposition'] = 'attachment; filename=ShoppCart.txt'
-        return response
+        return HttpResponse(result_cart, content_type='text/plain'
 
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
