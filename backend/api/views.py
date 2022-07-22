@@ -1,8 +1,5 @@
-import mimetypes
-import os
-from django.db.models import Sum
-import pdb
 from api.permissions import IsAuthorOrAdminOrReadOnly
+from django.db.models import Sum
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework.backends import DjangoFilterBackend
@@ -22,9 +19,6 @@ from .serializers import (IngredientGetSerializer, IngredientSerializer,
                           TagSerializer)
 
 
-from .mixins import CreateorListViewSet
-
-
 class RecipeViewSet(viewsets.ModelViewSet):
     """
     метод добавляет, удаляет, отображает список рецептов
@@ -33,7 +27,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipeFilter
     permission_classes = (IsAuthorOrAdminOrReadOnly,)
-    
+
     def get_serializer_class(self):
         """
         реализованы два класса сериализаторов на чтение и на запись
@@ -136,14 +130,18 @@ class RecipeViewSet(viewsets.ModelViewSet):
         """
         метод выгрузки списка покуп
         """
-        NAME='in_shopping_cart__ingredients__ingredient__name'
-        MESUREMENT_UNIT='in_shopping_cart__ingredients__ingredient__measurement_unit'
-        AMOUNT='in_shopping_cart__ingredients__amount'
-        n=ShoppingCart.objects.filter(user=request.user).values(NAME, MESUREMENT_UNIT).annotate(amount=Sum(AMOUNT)) 
+        name = 'in_shopping_cart__ingredients__ingredient__name'
+        unit = 'in_shopping_cart__ingredients__ingredient__measurement_unit'
+        ing_amount = 'in_shopping_cart__ingredients__amount'
+        ing_in_shopping_cart = ShoppingCart.objects.filter(
+            user=request.user).values(name, unit).annotate(
+                amount=Sum(ing_amount))
         result_cart = ''
-        for i in n:
-             result_cart += ''.join('{} {} {}'.format(i[NAME], i['amount'], i[MESUREMENT_UNIT]))
-             result_cart += '\r\n'
+        for ingredient in ing_in_shopping_cart:
+            result_cart += ''.join('{} {} {}'.format(
+                ingredient[name], ingredient['amount'],
+                ingredient[unit]))
+            result_cart += '\r\n'
         return HttpResponse(result_cart, content_type='text/plain')
 
 
