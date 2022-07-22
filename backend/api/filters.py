@@ -1,10 +1,9 @@
-from django_filters.rest_framework import (AllValuesMultipleFilter,
-                                           BooleanFilter, FilterSet)
 from recipe.models import Recipe
 
 
 class RecipeFilter(FilterSet):
     tags = AllValuesMultipleFilter(field_name='tags__slug')
+    author = AllValuesMultipleFilter(field_name='author__id')
     is_favorited = BooleanFilter(method='get_is_favorited')
     is_in_shopping_cart = BooleanFilter(method='get_is_in_shopping_cart')
 
