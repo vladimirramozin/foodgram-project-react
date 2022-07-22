@@ -145,7 +145,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         for i in n:
              result_cart += ''.join('{} {} {}'.format(i[NAME], i['amount'], i[MESUREMENT_UNIT]))
              result_cart += '\r\n'
-        return HttpResponse(result_cart, content_type='text/plain'
+        return HttpResponse(result_cart, content_type='text/plain')
 
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
